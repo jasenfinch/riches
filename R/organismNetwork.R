@@ -14,8 +14,8 @@ organismNetwork <- function(organism = 'hsa'){
     
     buildDataFromGraph(
       keggdata.graph = g,
-      databaseDir = str_c(tempdir(),"/db"),
-      internalDir = FALSE,
+      databaseDir = organism,
+      internalDir = TRUE,
       matrices = c("hypergeom", "diffusion", "pagerank"),
       normality = c("diffusion", "pagerank"),
       dampingFactor = 0.85,

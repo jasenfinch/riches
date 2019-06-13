@@ -1,6 +1,7 @@
 
 setClass('EnrichmentParameters',
          slots = list(
+           organism = 'character',
            functional = 'list',
            structural = 'list'
          )
@@ -10,8 +11,8 @@ setClass('FunctionalEnrichment',
          slots = list(
            network = 'FELLA.DATA',
            hits = 'tbl_df',
-           explanatory = 'character',
-           results = 'FELLA.USER'
+           explanatory = 'tbl_df',
+           results = 'list'
          )
 )
 

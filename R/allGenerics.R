@@ -6,3 +6,11 @@ setGeneric('organismCompounds',function(FELLA){
 setGeneric('functionalEnrichment',function(x,parameters){
   standardGeneric('functionalEnrichment')
 })
+
+setGeneric('plotGraph',function(x,pairwise,type = 'diffusion'){
+  standardGeneric('plotGraph')
+})
+
+setGeneric('availablePairwises',function(x){
+  standardGeneric('availablePairwises')
+})

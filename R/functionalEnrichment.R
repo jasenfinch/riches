@@ -35,7 +35,7 @@ setMethod('functionalEnrichment',signature = 'Workflow',
             explanFeat <- x %>%
               resultsAnalysis() %>%
               featureSelectionResults() %>%
-              filter(Method = parameters@features$method,
+              filter(Method == parameters@features$method,
                      Pvalue < parameters@features$threshold)
             
             pairwises <- explanFeat$Pairwise %>%

@@ -2,6 +2,7 @@
 setClass('EnrichmentParameters',
          slots = list(
            organism = 'character',
+           features = 'list',
            functional = 'list',
            structural = 'list'
          )

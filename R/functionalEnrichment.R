@@ -1,13 +1,12 @@
 #' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
 #' @export
 
-setMethod('functionalEnrichment',signature = 'Workflow',
-          function(x,parameters){
+setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',assignment = 'Assignment'),
+          function(analysis,assignment,parameters){
             
             FELLA <- organismNetwork(parameters@organism)
             
-            adductRules <- x %>%
-              resultsAnnotation() %>%
+            adductRules <- assignment %>%
               .@parameters %>%
               .@adductRules
             
@@ -17,8 +16,7 @@ setMethod('functionalEnrichment',signature = 'Workflow',
                                filter(ACCESSION_ID %in% oc$name) %>%
                                {metaboliteDB(.,descriptors = descriptors(.))})
             
-            mfs <- x %>%
-              resultsAnnotation() %>%
+            mfs <- assignment %>%
               assignments() %>%
               select(Name,MF,Adduct) %>%
               distinct()
@@ -38,8 +36,7 @@ setMethod('functionalEnrichment',signature = 'Workflow',
             bc <- MFhits$ACCESSION_ID %>%
               unique()
             
-            explanFeat <- x %>%
-              resultsAnalysis() %>%
+            explanFeat <- analysis %>%
               featureSelectionResults() %>%
               filter(Method == parameters@features$method,
                      Pvalue < parameters@features$threshold)

@@ -1,3 +1,6 @@
+#' @importFrom FELLA generateResultsGraph
+#' @importFrom tidygraph activate
+#' @importFrom ggthemes ptol_pal
 
 setMethod('plotGraph',signature = 'FunctionalEnrichment',
           function(x,pairwise,type = 'diffusion'){

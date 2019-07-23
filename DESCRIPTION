@@ -1,12 +1,12 @@
 Package: riches
-Title: Compositional, Strucutral and Functional Enrichment Analyses
+Title: Strucutral and Functional Enrichment Analyses
 Version: 0.0.1
 Authors@R: 
     person(given = "Jasen",
            family = "Finch",
            role = c("aut", "cre"),
            email = "jsf9@aber.ac.uk")
-Description: Compositional, structural and functional enrichment for metabolomics data.
+Description: Structural and functional enrichment for metabolomics data.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

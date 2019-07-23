@@ -1,9 +1,15 @@
-
+#' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
 #' @export
 
 setMethod('functionalEnrichment',signature = 'Workflow',
           function(x,parameters){
-            FELLA <- organismNetwork(organism)
+            
+            FELLA <- organismNetwork(parameters@organism)
+            
+            adductRules <- x %>%
+              resultsAnnotation() %>%
+              .@parameters %>%
+              .@adductRules
             
             oc <- organismCompounds(FELLA)
             
@@ -11,7 +17,7 @@ setMethod('functionalEnrichment',signature = 'Workflow',
                                filter(ACCESSION_ID %in% oc$name) %>%
                                {metaboliteDB(.,descriptors = descriptors(.))})
             
-            mfs<- x %>%
+            mfs <- x %>%
               resultsAnnotation() %>%
               assignments() %>%
               select(Name,MF,Adduct) %>%
@@ -23,7 +29,7 @@ setMethod('functionalEnrichment',signature = 'Workflow',
                 m <- .
                 oc %>%
                   filterMF(m$MF) %>%
-                  filterIP(Adducts$Rule[Adducts$Name == m$Adduct]) %>%
+                  filterIP(adductRules$Rule[adductRules$Name == m$Adduct]) %>%
                   getAccessions() %>%
                   mutate(Name = m$Name,MF = m$MF,Adduct = m$Adduct)
               }) %>%
@@ -44,19 +50,24 @@ setMethod('functionalEnrichment',signature = 'Workflow',
             enrichRes <- pairwises %>%
               map(~{
                 p <- .
+                message(str_c('\n',p))
                 feat <- explanFeat %>%
                   filter(Pairwise == p)
                 ec <- MFhits %>%
                   filter(Name %in% feat$Feature) %>%
                   .$ACCESSION_ID %>%
                   unique()
-                defineCompounds(
-                  compounds = ec,
-                  compoundsBackground = bc,
-                  data = FELLA) %>%
-                  runHypergeom(data = FELLA) %>%
-                  runDiffusion(data = FELLA) %>%
-                  runPagerank(data = FELLA)
+                if (length(ec) > 0) {
+                  defineCompounds(
+                    compounds = ec,
+                    compoundsBackground = bc,
+                    data = FELLA) %>%
+                    runHypergeom(data = FELLA) %>%
+                    runDiffusion(data = FELLA) %>%
+                    runPagerank(data = FELLA)  
+                } else {
+                  message('No explanatory features assigned.')
+                }
               }) %>%
               set_names(pairwises)
             

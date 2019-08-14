@@ -1,4 +1,4 @@
-
+#' @importFrom methods new
 #' @export
 
 enrichmentParameters <- function(organism){

@@ -4,6 +4,11 @@ language: R
 cache: packages
 warnings_are_errors: true
 
+apt_packages:
+  - libopenbabel-dev
+  - mesa-common-dev
+  - libglu1-mesa-dev
+  
 r:
   - release
   - devel

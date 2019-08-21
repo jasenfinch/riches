@@ -7,6 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "jsf9@aber.ac.uk")
 Description: Structural and functional enrichment for metabolomics data.
+biocViews: Metabolomics
 License: GPL (>= 3)
 Encoding: UTF-8
 Imports: FELLA,

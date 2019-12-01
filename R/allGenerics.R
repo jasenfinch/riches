@@ -3,6 +3,7 @@ setGeneric('organismCompounds',function(FELLA){
   standardGeneric('organismCompounds')
 })
 
+#' @rdname functionalEnrichment
 setGeneric('functionalEnrichment',function(analysis,assignment,parameters){
   standardGeneric('functionalEnrichment')
 })

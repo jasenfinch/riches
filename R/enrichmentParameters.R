@@ -1,3 +1,6 @@
+#' enrichmentParameters
+#' @description Enrichment parameters.
+#' @param organism KEGG organism ID
 #' @importFrom methods new
 #' @export
 

@@ -1,3 +1,9 @@
+#' functionalEnrichment
+#' @rdname functionalEnrichment
+#' @description Functional enrichment.
+#' @param analysis S4 object of class Analysis
+#' @param assignment S4 object of class Assignment
+#' @param parameters S4 object of class EnrichmentParameters
 #' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
 #' @importFrom mzAnnotation metaboliteDB descriptors
 #' @importFrom MFassign assignments
@@ -7,7 +13,7 @@
 #' @importFrom magrittr set_names
 #' @export
 
-setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',assignment = 'Assignment'),
+setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',assignment = 'Assignment',parameters = 'EnrichmentParameters'),
           function(analysis,assignment,parameters){
             
             FELLA <- organismNetwork(parameters@organism)

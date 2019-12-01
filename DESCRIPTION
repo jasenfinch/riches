@@ -10,6 +10,7 @@ Description: Structural and functional enrichment for metabolomics data.
 biocViews: Metabolomics
 License: GPL (>= 3)
 Encoding: UTF-8
+Depends: R (>= 3.5.0)
 Imports: FELLA,
         MFassign,
         dplyr,
@@ -17,9 +18,15 @@ Imports: FELLA,
         magrittr,
         stringr,
         tidygraph,
-        methods
+        methods,
+        mzAnnotation,
+        purrr,
+        metabolyseR,
+        ggplot2,
+        ggraph,
+        tibble
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.1
 Collate: 'allClasses.R'
   'allGenerics.R'
   'access.R'

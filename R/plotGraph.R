@@ -1,6 +1,11 @@
 #' @importFrom FELLA generateResultsGraph
 #' @importFrom tidygraph activate
 #' @importFrom ggthemes ptol_pal
+#' @importFrom dplyr mutate
+#' @importFrom stringr str_split_fixed coll
+#' @importFrom ggraph create_layout ggraph geom_edge_link geom_node_point geom_node_text theme_graph
+#' @importFrom tibble tibble
+#' @importFrom ggplot2 aes scale_colour_manual coord_fixed labs
 
 setMethod('plotGraph',signature = 'FunctionalEnrichment',
           function(x,pairwise,type = 'diffusion'){

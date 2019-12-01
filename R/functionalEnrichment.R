@@ -1,4 +1,10 @@
 #' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
+#' @importFrom mzAnnotation metaboliteDB descriptors
+#' @importFrom MFassign assignments
+#' @importFrom dplyr select distinct bind_rows
+#' @importFrom purrr map
+#' @importFrom metabolyseR modellingResults
+#' @importFrom magrittr set_names
 #' @export
 
 setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',assignment = 'Assignment'),
@@ -37,7 +43,7 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
               unique()
             
             explanFeat <- analysis %>%
-              featureSelectionResults() %>%
+              modellingResults() %>%
               filter(Method == parameters@features$method,
                      Pvalue < parameters@features$threshold)
             

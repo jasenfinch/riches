@@ -12,7 +12,6 @@ r:
 - devel
 
 r_github_packages:
-- thomasp85/patchwork
 - jasenfinch/mzAnnotation
 - jasenfinch/metabolyseR
 - jasenfinch/MFassign

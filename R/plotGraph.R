@@ -8,8 +8,10 @@
 #' @importFrom ggplot2 aes scale_colour_manual coord_fixed labs
 
 setMethod('plotGraph',signature = 'FunctionalEnrichment',
-          function(x,pairwise,type = 'diffusion'){
-            en <- x@results[[pairwise]]
+          function(x,comparison,type = 'diffusion'){
+            en <- x@results[[comparison]]
+            
+            FELLA <- x@network
             
             pg <- generateResultsGraph(method = type,object = en,data = FELLA,nlimit = 1000,LabelLengthAtPlot = 100) %>%
               as_tbl_graph() %>%
@@ -51,6 +53,6 @@ setMethod('plotGraph',signature = 'FunctionalEnrichment',
               scale_colour_manual(values = colours %>% filter(Type %in% unique(pg %>% nodes() %>% .$Type)) %>% .$Colour) +
               theme_graph(base_size = 11,base_family = '') +
               coord_fixed() +
-              labs(title = pairwise) 
+              labs(title = comparison) 
           }
 )

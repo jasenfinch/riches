@@ -8,7 +8,8 @@ setGeneric('functionalEnrichment',function(analysis,assignment,parameters){
   standardGeneric('functionalEnrichment')
 })
 
-setGeneric('plotGraph',function(x,pairwise,type = 'diffusion'){
+
+setGeneric('plotGraph',function(x,comparison,type = 'diffusion'){
   standardGeneric('plotGraph')
 })
 

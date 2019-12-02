@@ -4,10 +4,21 @@
 \alias{enrichmentParameters}
 \title{enrichmentParameters}
 \usage{
-enrichmentParameters(organism)
+enrichmentParameters(
+  organism,
+  model = "randomForest",
+  predictor = "class",
+  threshold = 0.05
+)
 }
 \arguments{
 \item{organism}{KEGG organism ID}
+
+\item{model}{model type to use for extracting explanatory features}
+
+\item{predictor}{predictor predictor name to use for extracting explanatory features}
+
+\item{threshold}{explanatory feature cutoff}
 }
 \description{
 Enrichment parameters.

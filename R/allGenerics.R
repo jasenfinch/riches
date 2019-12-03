@@ -3,11 +3,13 @@ setGeneric('organismCompounds',function(FELLA){
   standardGeneric('organismCompounds')
 })
 
-setGeneric('functionalEnrichment',function(x,parameters){
+#' @rdname functionalEnrichment
+setGeneric('functionalEnrichment',function(analysis,assignment,parameters){
   standardGeneric('functionalEnrichment')
 })
 
-setGeneric('plotGraph',function(x,pairwise,type = 'diffusion'){
+
+setGeneric('plotGraph',function(x,comparison,type = 'diffusion'){
   standardGeneric('plotGraph')
 })
 

@@ -19,10 +19,10 @@ setClass('FunctionalEnrichment',
 
 setClass('StructuralEnrichment')
 
-setClass('Enrichment',
-         slots = list(
-           workflow = 'Workflow',
-           functional = 'FunctionalEnrichment',
-           structural = 'StructuralEnrichment'
-         )
-)
+# setClass('Enrichment',
+#          slots = list(
+#            workflow = 'Workflow',
+#            functional = 'FunctionalEnrichment',
+#            structural = 'StructuralEnrichment'
+#          )
+# )

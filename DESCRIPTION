@@ -1,6 +1,6 @@
 Package: riches
 Title: Strucutral and Functional Enrichment Analyses
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person(given = "Jasen",
            family = "Finch",
@@ -8,7 +8,7 @@ Authors@R:
            email = "jsf9@aber.ac.uk")
 Description: Structural and functional enrichment for metabolomics data.
 biocViews: Metabolomics
-License: GPL (>= 3)
+License: GPL-3
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
 Imports: FELLA,
@@ -25,6 +25,9 @@ Imports: FELLA,
         ggplot2,
         ggraph,
         tibble
+Remotes: jasenfinch/MFassign,
+        jasenfinch/mzAnnotation,
+        jasenfinch/metabolyserR
 LazyData: true
 RoxygenNote: 7.1.1
 Collate: 'allClasses.R'

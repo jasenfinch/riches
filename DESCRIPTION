@@ -30,14 +30,15 @@ Remotes: jasenfinch/MFassign,
         jasenfinch/metabolyseR
 LazyData: true
 RoxygenNote: 7.1.1
-Collate: 'allClasses.R'
-  'allGenerics.R'
-  'access.R'
-  'enrichmentParameters.R'
-  'functionalEnrichment.R'
-  'organismNetwork.R'
-  'plotGraph.R'
-  'riches.R'
+Collate: allClasses.R
+      allGenerics.R
+      access.R
+      enrichmentParameters.R
+      example-data.R
+      functionalEnrichment.R
+      organismNetwork.R
+      plotGraph.R
+      riches.R
 Suggests: 
     testthat,
     covr

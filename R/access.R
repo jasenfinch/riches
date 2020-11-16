@@ -10,7 +10,7 @@ setMethod('availablePairwises',signature = 'FunctionalEnrichment',
 #' Get and set enrichment parameters
 #' @rdname EnrichmentParameters-accessors
 #' @description Retrieve or set enrichment parameters.
-#' @param S4 object of class EnrichmentParameters
+#' @param x S4 object of class EnrichmentParameters
 #' @param value value to set
 #' @export
 

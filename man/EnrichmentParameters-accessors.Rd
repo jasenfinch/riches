@@ -16,9 +16,9 @@ functional(x) <- value
 \S4method{functional}{EnrichmentParameters}(x) <- value
 }
 \arguments{
-\item{value}{value to set}
+\item{x}{S4 object of class EnrichmentParameters}
 
-\item{S4}{object of class EnrichmentParameters}
+\item{value}{value to set}
 }
 \description{
 Retrieve or set enrichment parameters.

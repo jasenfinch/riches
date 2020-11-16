@@ -5,6 +5,7 @@
 #' @param assignment S4 object of class Assignment
 #' @param parameters S4 object of class EnrichmentParameters
 #' @examples 
+#' \dontrun{
 #' ## Generate enrichment parameters
 #' parameters <- enrichmentParameters('bdi')
 #' 
@@ -13,6 +14,7 @@
 #' 
 #' ## Run functional enrichment
 #' fe <- functionalEnrichment(example_analysis,example_assignment,parameters)
+#' }
 #' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
 #' @importFrom mzAnnotation metaboliteDB descriptors filterACCESSIONS filterMF filterIP getAccessions
 #' @importFrom MFassign assignments

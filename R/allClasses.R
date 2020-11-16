@@ -5,6 +5,11 @@ setClass('EnrichmentParameters',
            features = 'list',
            functional = 'list',
            structural = 'list'
+         ),
+         prototype = list(
+           functional = list(methods = c('hypergeom',
+                                         'diffusion',
+                                         'pagerank'))
          )
 )
 

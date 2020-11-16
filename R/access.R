@@ -6,3 +6,24 @@ setMethod('availablePairwises',signature = 'FunctionalEnrichment',
               unique()
           }
 )
+
+#' Get and set enrichment parameters
+#' @rdname EnrichmentParameters-accessors
+#' @description Retrieve or set enrichment parameters.
+#' @param S4 object of class EnrichmentParameters
+#' @param value value to set
+#' @export
+
+setMethod('functional',signature = 'EnrichmentParameters',
+          function(x){
+            x@functional
+          })
+
+#' @rdname EnrichmentParameters-accessors
+#' @export
+
+setMethod('functional<-',signature = 'EnrichmentParameters',
+          function(x,value){
+            x@functional <- value
+            return(x)
+          })

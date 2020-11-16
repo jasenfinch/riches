@@ -2,6 +2,8 @@
 
 export(enrichmentParameters)
 export(organismNetwork)
+exportMethods("functional<-")
+exportMethods(functional)
 exportMethods(functionalEnrichment)
 importFrom(FELLA,buildDataFromGraph)
 importFrom(FELLA,buildGraphFromKEGGREST)

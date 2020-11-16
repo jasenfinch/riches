@@ -4,6 +4,17 @@
 #' @param analysis S4 object of class Analysis
 #' @param assignment S4 object of class Assignment
 #' @param parameters S4 object of class EnrichmentParameters
+#' @examples 
+#' \dontrun{
+#' ## Generate enrichment parameters
+#' parameters <- enrichmentParameters('bdi')
+#' 
+#' ## Select only "diffusion" enrichment
+#' functional(parameters) <- list(methods = 'diffusion')
+#' 
+#' ## Run functional enrichment
+#' fe <- functionalEnrichment(example_analysis,example_assignment,parameters)
+#' }
 #' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
 #' @importFrom mzAnnotation metaboliteDB descriptors filterACCESSIONS filterMF filterIP getAccessions
 #' @importFrom MFassign assignments
@@ -44,7 +55,7 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
               }) %>%
               bind_rows()
             
-            bc <- MFhits$ACCESSION_ID %>%
+            bc <- MFhits$ID %>%
               unique()
             
             explanFeat <- analysis %>%
@@ -63,16 +74,30 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
                   filter(Comparison == p)
                 ec <- MFhits %>%
                   filter(Name %in% feat$Feature) %>%
-                  .$ACCESSION_ID %>%
+                  .$ID %>%
                   unique()
                 if (length(ec) > 0) {
-                  defineCompounds(
+                  comp <- defineCompounds(
                     compounds = ec,
                     compoundsBackground = bc,
-                    data = FELLA) %>%
-                    runHypergeom(data = FELLA) %>%
-                    runDiffusion(data = FELLA) %>%
-                    runPagerank(data = FELLA)  
+                    data = FELLA)
+                  
+                  if ('hypergeom' %in% functional(parameters)$methods) {
+                    comp <- comp %>%
+                      runHypergeom(data = FELLA)
+                  }
+                  
+                  if ('diffusion' %in% functional(parameters)$methods) {
+                    comp <- comp %>%
+                      runDiffusion(data = FELLA)    
+                  }
+                  
+                  if ('pagerank'%in% functional(parameters)$methods) {
+                    comp <- comp %>%
+                      runPagerank(data = FELLA)
+                  }
+                  
+                  return(comp)
                 } else {
                   message('No explanatory features assigned.')
                 }
@@ -84,6 +109,6 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
                 hits = MFhits,
                 explanatory = explanFeat,
                 results = enrichRes
-                )
+            )
           }
 )

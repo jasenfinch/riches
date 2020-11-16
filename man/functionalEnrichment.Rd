@@ -19,3 +19,15 @@ functionalEnrichment(analysis, assignment, parameters)
 \description{
 Functional enrichment.
 }
+\examples{
+\dontrun{
+## Generate enrichment parameters
+parameters <- enrichmentParameters('bdi')
+
+## Select only "diffusion" enrichment
+functional(parameters) <- list(methods = 'diffusion')
+
+## Run functional enrichment
+fe <- functionalEnrichment(example_analysis,example_assignment,parameters)
+}
+}

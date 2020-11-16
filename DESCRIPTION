@@ -1,14 +1,16 @@
 Package: riches
 Title: Strucutral and Functional Enrichment Analyses
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person(given = "Jasen",
            family = "Finch",
            role = c("aut", "cre"),
            email = "jsf9@aber.ac.uk")
 Description: Structural and functional enrichment for metabolomics data.
+URL: https://jasenfinch.github.io/riches/
+BugReports: https://github.com/jasenfinch/riches/issues
 biocViews: Metabolomics
-License: GPL (>= 3)
+License: GPL-3
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
 Imports: FELLA,
@@ -25,13 +27,20 @@ Imports: FELLA,
         ggplot2,
         ggraph,
         tibble
+Remotes: jasenfinch/MFassign,
+        jasenfinch/mzAnnotation,
+        jasenfinch/metabolyseR
 LazyData: true
-RoxygenNote: 7.0.2
-Collate: 'allClasses.R'
-  'allGenerics.R'
-  'access.R'
-  'enrichmentParameters.R'
-  'functionalEnrichment.R'
-  'organismNetwork.R'
-  'plotGraph.R'
-  'riches.R'
+RoxygenNote: 7.1.1
+Collate: allClasses.R
+      allGenerics.R
+      access.R
+      enrichmentParameters.R
+      example-data.R
+      functionalEnrichment.R
+      organismNetwork.R
+      plotGraph.R
+      riches.R
+Suggests: 
+    testthat,
+    covr

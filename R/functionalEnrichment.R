@@ -4,6 +4,15 @@
 #' @param analysis S4 object of class Analysis
 #' @param assignment S4 object of class Assignment
 #' @param parameters S4 object of class EnrichmentParameters
+#' @examples 
+#' ## Generate enrichment parameters
+#' parameters <- enrichmentParameters('bdi')
+#' 
+#' ## Select only "diffusion" enrichment
+#' functional(parameters) <- list(methods = 'diffusion')
+#' 
+#' ## Run functional enrichment
+#' fe <- functionalEnrichment(example_analysis,example_assignment,parameters)
 #' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
 #' @importFrom mzAnnotation metaboliteDB descriptors filterACCESSIONS filterMF filterIP getAccessions
 #' @importFrom MFassign assignments

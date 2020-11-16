@@ -44,7 +44,7 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
               }) %>%
               bind_rows()
             
-            bc <- MFhits$ACCESSION_ID %>%
+            bc <- MFhits$ID %>%
               unique()
             
             explanFeat <- analysis %>%
@@ -63,7 +63,7 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
                   filter(Comparison == p)
                 ec <- MFhits %>%
                   filter(Name %in% feat$Feature) %>%
-                  .$ACCESSION_ID %>%
+                  .$ID %>%
                   unique()
                 if (length(ec) > 0) {
                   defineCompounds(

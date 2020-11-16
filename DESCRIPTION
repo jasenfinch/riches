@@ -27,7 +27,7 @@ Imports: FELLA,
         tibble
 Remotes: jasenfinch/MFassign,
         jasenfinch/mzAnnotation,
-        jasenfinch/metabolyserR
+        jasenfinch/metabolyseR
 LazyData: true
 RoxygenNote: 7.1.1
 Collate: 'allClasses.R'
@@ -38,3 +38,5 @@ Collate: 'allClasses.R'
   'organismNetwork.R'
   'plotGraph.R'
   'riches.R'
+Suggests: 
+    testthat

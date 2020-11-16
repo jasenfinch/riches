@@ -15,7 +15,6 @@ enrichmentParameters <- function(organism, model = 'randomForest', predictor = '
         predictor = predictor,
         threshold = threshold
       ),
-      functional = list(),
       structural = list()
   )
 }

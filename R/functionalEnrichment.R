@@ -66,13 +66,27 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
                   .$ID %>%
                   unique()
                 if (length(ec) > 0) {
-                  defineCompounds(
+                  comp <- defineCompounds(
                     compounds = ec,
                     compoundsBackground = bc,
-                    data = FELLA) %>%
-                    runHypergeom(data = FELLA) %>%
-                    runDiffusion(data = FELLA) %>%
-                    runPagerank(data = FELLA)  
+                    data = FELLA)
+                  
+                  if ('hypergeom' %in% functional(parameters)$methods) {
+                    comp <- comp %>%
+                      runHypergeom(data = FELLA)
+                  }
+                  
+                  if ('diffusion' %in% functional(parameters)$methods) {
+                    comp <- comp %>%
+                      runDiffusion(data = FELLA)    
+                  }
+                  
+                  if ('pagerank'%in% functional(parameters)$methods) {
+                    comp <- comp %>%
+                      runPagerank(data = FELLA)
+                  }
+                  
+                  return(comp)
                 } else {
                   message('No explanatory features assigned.')
                 }
@@ -84,6 +98,6 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
                 hits = MFhits,
                 explanatory = explanFeat,
                 results = enrichRes
-                )
+            )
           }
 )

@@ -39,4 +39,5 @@ Collate: 'allClasses.R'
   'plotGraph.R'
   'riches.R'
 Suggests: 
-    testthat
+    testthat,
+    covr

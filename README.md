@@ -1,5 +1,20 @@
+
 # riches
 
-[![Travis build status](https://travis-ci.org/jasenfinch/riches.svg?branch=master)](https://travis-ci.org/jasenfinch/riches)
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R build status](https://github.com/jasenfinch/riches/workflows/R-CMD-check/badge.svg)](https://github.com/jasenfinch/riches/actions)
+<!-- badges: end -->
 
-Functional and structural enrichment for metabolomic analyses
+Structural and functional enrichment for metabolomics data.
+
+## Installation
+
+The `riches` package can be installed from GitHub using:
+
+``` r
+remotes::install_github('jasenfinch/riches')
+```
+
+
+

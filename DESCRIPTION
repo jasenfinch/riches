@@ -7,6 +7,8 @@ Authors@R:
            role = c("aut", "cre"),
            email = "jsf9@aber.ac.uk")
 Description: Structural and functional enrichment for metabolomics data.
+URL: https://jasenfinch.github.io/riches/
+BugReports: https://github.com/jasenfinch/riches/issues
 biocViews: Metabolomics
 License: GPL-3
 Encoding: UTF-8

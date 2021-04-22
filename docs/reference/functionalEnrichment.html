@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">riches</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -89,7 +89,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/jasenfinch/riches/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -104,7 +109,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>functionalEnrichment</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/jasenfinch/riches/blob/master/R/allGenerics.R'><code>R/allGenerics.R</code></a>, <a href='https://github.com/jasenfinch/riches/blob/master/R/functionalEnrichment.R'><code>R/functionalEnrichment.R</code></a></small>
     <div class="hidden name"><code>functionalEnrichment.Rd</code></div>
     </div>
 
@@ -136,7 +141,8 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## Generate enrichment parameters</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'>## Generate enrichment parameters</span>
 <span class='va'>parameters</span> <span class='op'>&lt;-</span> <span class='fu'><a href='enrichmentParameters.html'>enrichmentParameters</a></span><span class='op'>(</span><span class='st'>'bdi'</span><span class='op'>)</span>
 
 <span class='co'>## Select only "diffusion" enrichment</span>
@@ -144,8 +150,8 @@
 
 <span class='co'>## Run functional enrichment</span>
 <span class='va'>fe</span> <span class='op'>&lt;-</span> <span class='fu'>functionalEnrichment</span><span class='op'>(</span><span class='va'>example_analysis</span>,<span class='va'>example_assignment</span>,<span class='va'>parameters</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading KEGG graph data...</span></div><div class='output co'>#&gt; <span class='message'>Done.</span></div><div class='output co'>#&gt; <span class='message'>Loading hypergeom data...</span></div><div class='output co'>#&gt; <span class='message'>Loading matrix...</span></div><div class='output co'>#&gt; <span class='message'>Done.</span></div><div class='output co'>#&gt; <span class='message'>Loading diffusion data...</span></div><div class='output co'>#&gt; <span class='message'>Loading matrix...</span></div><div class='output co'>#&gt; <span class='message'>Done.</span></div><div class='output co'>#&gt; <span class='message'>Loading rowSums...</span></div><div class='output co'>#&gt; <span class='message'>Done.</span></div><div class='output co'>#&gt; <span class='message'>Loading pagerank data...</span></div><div class='output co'>#&gt; <span class='message'>Loading matrix...</span></div><div class='output co'>#&gt; <span class='message'>Done.</span></div><div class='output co'>#&gt; <span class='message'>Loading rowSums...</span></div><div class='output co'>#&gt; <span class='message'>Done.</span></div><div class='output co'>#&gt; <span class='message'>Data successfully loaded.</span></div><div class='output co'>#&gt; <span class='message'>Permutation results not found, using measure value instead.</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>ABR1~ABR5~ABR6~BD21</span></div><div class='output co'>#&gt; <span class='message'>Running diffusion...</span></div><div class='output co'>#&gt; <span class='message'>Computing p-scores through the specified distribution.</span></div><div class='output co'>#&gt; <span class='message'>Done.</span></div></pre>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

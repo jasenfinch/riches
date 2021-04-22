@@ -20,7 +20,7 @@
 #' @importFrom MFassign assignments
 #' @importFrom dplyr select distinct bind_rows
 #' @importFrom purrr map
-#' @importFrom metabolyseR modellingResults explanatoryFeatures
+#' @importFrom metabolyseR analysisResults explanatoryFeatures
 #' @importFrom magrittr set_names
 #' @export
 
@@ -59,9 +59,10 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
               unique()
             
             explanFeat <- analysis %>%
-              modellingResults() %>%
-              {.[[parameters@features$model]][[parameters@features$predictor]]} %>%
-              explanatoryFeatures(threshold = parameters@features$threshold)
+              analysisResults('modelling') %>%
+              .[[parameters@features$model]] %>%
+              explanatoryFeatures(threshold = parameters@features$threshold) %>% 
+              filter(Response == parameters@features$response)
             
             comparisons <- explanFeat$Comparison %>%
               unique()

@@ -7,7 +7,7 @@
 enrichmentParameters(
   organism,
   model = "randomForest",
-  predictor = "class",
+  response = "class",
   threshold = 0.05
 )
 }
@@ -16,7 +16,7 @@ enrichmentParameters(
 
 \item{model}{model type to use for extracting explanatory features}
 
-\item{predictor}{predictor predictor name to use for extracting explanatory features}
+\item{response}{response variable name to use for extracting explanatory features}
 
 \item{threshold}{explanatory feature cutoff}
 }

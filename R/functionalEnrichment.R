@@ -60,8 +60,9 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
             
             explanFeat <- analysis %>%
               analysisResults('modelling') %>%
-              {.[[parameters@features$model]][[parameters@features$predictor]]} %>%
-              explanatoryFeatures(threshold = parameters@features$threshold)
+              .[[parameters@features$model]] %>%
+              explanatoryFeatures(threshold = parameters@features$threshold) %>% 
+              filter(Response == parameters@features$response)
             
             comparisons <- explanFeat$Comparison %>%
               unique()

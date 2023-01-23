@@ -14,7 +14,7 @@ License: GPL-3
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
 Imports: FELLA,
-        MFassign,
+        assignments,
         dplyr,
         ggthemes,
         magrittr,
@@ -27,16 +27,18 @@ Imports: FELLA,
         ggplot2,
         ggraph,
         tibble
-Remotes: jasenfinch/MFassign,
-        jasenfinch/mzAnnotation,
-        jasenfinch/metabolyseR
+Remotes: jasenfinch/MFassign@devel,
+        jasenfinch/mzAnnotation@devel,
+        jasenfinch/cheminf,
+        jasenfinch/metabolyseR@devel,
+        bioc::FELLA
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Collate: allClasses.R
       allGenerics.R
       access.R
       enrichmentParameters.R
-      example-data.R
+      assigned-data.R
       functionalEnrichment.R
       organismNetwork.R
       plotGraph.R

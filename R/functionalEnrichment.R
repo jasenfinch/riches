@@ -16,8 +16,8 @@
 #' fe <- functionalEnrichment(example_analysis,example_assignment,parameters)
 #' }
 #' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
-#' @importFrom mzAnnotation metaboliteDB descriptors filterACCESSIONS filterMF filterIP getAccessions
-#' @importFrom MFassign assignments
+#' @importFrom cheminf metaboliteDB descriptors filterEntries filterMF filterIP entries
+#' @importFrom assignments assignments
 #' @importFrom dplyr select distinct bind_rows
 #' @importFrom purrr map
 #' @importFrom metabolyseR analysisResults explanatoryFeatures
@@ -36,7 +36,7 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
             oc <- organismCompounds(FELLA)
             
             oc <- metabolites %>%
-              filterACCESSIONS(oc$name) 
+              filterEntries(oc$name) 
             
             mfs <- assignment %>%
               assignments() %>%
@@ -50,7 +50,7 @@ setMethod('functionalEnrichment',signature = signature(analysis = 'Analysis',ass
                 oc %>%
                   filterMF(m$MF) %>%
                   filterIP(adductRules$Rule[adductRules$Name == m$Adduct]) %>%
-                  getAccessions() %>%
+                  entries() %>%
                   mutate(Name = m$Name,MF = m$MF,Adduct = m$Adduct)
               }) %>%
               bind_rows()

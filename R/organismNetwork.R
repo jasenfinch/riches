@@ -33,7 +33,7 @@ organismNetwork <- function(organism = 'hsa'){
 #' @importFrom magrittr %>%
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom FELLA getGraph
-#' @importFrom MFassign nodes
+#' @importFrom assignments nodes
 #' @importFrom dplyr filter
 
 setMethod('organismCompounds',signature = 'FELLA.DATA',

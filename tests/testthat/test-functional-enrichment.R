@@ -1,7 +1,5 @@
 
-context('functional enrichment')
-
-test_that('functional enrichment works',{
+test_that('functional enrichment works for RandomForest class',{
   parameters <- enrichmentParameters('bdi')
   functional(parameters) <- list(methods = 'diffusion')
   

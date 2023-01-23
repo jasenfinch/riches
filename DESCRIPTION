@@ -40,7 +40,7 @@ Collate: allClasses.R
       enrichmentParameters.R
       assigned-data.R
       functional-enrichment.R
-      organismNetwork.R
+      organism-graph.R
       plotGraph.R
       riches.R
       internals.R

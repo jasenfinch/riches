@@ -1,11 +1,11 @@
 
-setMethod('availablePairwises',signature = 'FunctionalEnrichment',
-          function(x){
-            x@explanatory %>%
-              .$Pairwise %>%
-              unique()
-          }
-)
+# setMethod('availablePairwises',signature = 'FunctionalEnrichment',
+#           function(x){
+#             x@explanatory %>%
+#               .$Pairwise %>%
+#               unique()
+#           }
+# )
 
 #' Get and set enrichment parameters
 #' @rdname EnrichmentParameters-accessors

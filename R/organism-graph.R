@@ -1,16 +1,16 @@
-#' organismNetwork
-#' @description Gather organism specific KEGG network ready for enrichment analysis
+#' Organism graph
+#' @description Gather organism specific KEGG graph ready for enrichment analysis
 #' @param organism KEGG organism code
 #' @importFrom FELLA buildGraphFromKEGGREST buildDataFromGraph loadKEGGdata listInternalDatabases
 #' @importFrom stringr str_c
 #' @export
 
-organismNetwork <- function(organism = 'hsa'){
+organismGraph <- function(organism = 'hsa',filter.path = NULL,internalDir = TRUE){
   
   if (!(organism %in% listInternalDatabases())) {
     message('Internal database not found for this organism. Building...')
     
-    g <- buildGraphFromKEGGREST(organism = organism, filter.path = NULL)
+    g <- buildGraphFromKEGGREST(organism = organism, filter.path = filter.path)
     
     buildDataFromGraph(
       keggdata.graph = g,
@@ -39,10 +39,10 @@ organismNetwork <- function(organism = 'hsa'){
 setMethod('organismCompounds',signature = 'FELLA.DATA',
           function(FELLA){
             FELLA %>%
-            getGraph() %>%
-            as_tbl_graph() %>%
-            nodes() %>%
-            filter(com == 5)
+              getGraph() %>%
+              as_tbl_graph() %>%
+              nodes() %>%
+              filter(com == 5)
           } 
 )
 

@@ -16,17 +16,17 @@ Depends: R (>= 3.5.0)
 Imports: FELLA,
         assignments,
         dplyr,
+        ggplot2,
+        ggraph,
         ggthemes,
         magrittr,
-        stringr,
-        tidygraph,
+        metabolyseR,
         methods,
         mzAnnotation,
         purrr,
-        metabolyseR,
-        ggplot2,
-        ggraph,
-        tibble
+        stringr,
+        tibble,
+        tidygraph
 Remotes: jasenfinch/MFassign@devel,
         jasenfinch/mzAnnotation@devel,
         jasenfinch/cheminf,
@@ -39,10 +39,11 @@ Collate: allClasses.R
       access.R
       enrichmentParameters.R
       assigned-data.R
-      functionalEnrichment.R
+      functional-enrichment.R
       organismNetwork.R
       plotGraph.R
       riches.R
+      internals.R
 Suggests: 
     testthat,
     covr

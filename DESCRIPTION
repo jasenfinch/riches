@@ -34,14 +34,6 @@ Remotes: jasenfinch/MFassign@devel,
         bioc::FELLA
 LazyData: true
 RoxygenNote: 7.2.3
-Collate: 
-      allGenerics.R
-      assigned-data.R
-      functional-enrichment.R
-      organism-graph.R
-      plotGraph.R
-      riches.R
-      internals.R
 Suggests: 
     testthat,
     covr

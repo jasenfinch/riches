@@ -27,7 +27,7 @@ setMethod('show',signature = 'FunctionalEnrichment',
             show(as(object,'RandomForest'))
             show(as(object,'FELLA.DATA'))
             message()
-            cat(nrow(hits(object)),'m/z features matched to KEGG compounds.\n')
+            cat(length(unique(hits(object)$feature)),'m/z features matched to KEGG compounds.\n')
             cat(length(unique(explanatoryFeatures(object)$feature)),'explanatory m/z features.')
             message()
             

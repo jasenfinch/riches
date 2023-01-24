@@ -22,6 +22,7 @@ extractAssignments <- function(x){
 }
 
 #' @importFrom rlang parse_expr
+#' @importFrom dplyr left_join rename
 
 pips <- function(x,organism_data,adduct_rules_table){
   organism_compounds <- organismCompounds(organism_data)
@@ -49,5 +50,9 @@ pips <- function(x,organism_data,adduct_rules_table){
                feature = .x$feature,
                adduct = .x$adduct)
     }) %>%
-    bind_rows()
+    bind_rows() %>% 
+    left_join(organism_compounds %>% 
+                rename(ID = name,
+                       compound = NAME),
+              by = 'ID')
 }

@@ -12,13 +12,16 @@ BugReports: https://github.com/jasenfinch/riches/issues
 biocViews: Metabolomics
 License: GPL-3
 Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
 Depends: R (>= 3.5.0)
 Imports: 
+        cheminf,
         dplyr,
         FELLA,
         ggplot2,
         ggraph,
         ggthemes,
+        igraph,
         magrittr,
         metabolyseR,
         methods,
@@ -26,7 +29,8 @@ Imports:
         purrr,
         stringr,
         tibble,
-        tidygraph
+        tidygraph,
+        tidyr
 Remotes: jasenfinch/MFassign@devel,
         jasenfinch/mzAnnotation@devel,
         jasenfinch/cheminf,

@@ -7,6 +7,10 @@
 #' @importFrom tibble tibble
 #' @importFrom ggplot2 aes scale_colour_manual coord_fixed labs
 
+setGeneric('plotGraph',function(x,comparison,type = 'diffusion'){
+  standardGeneric('plotGraph')
+})
+
 setMethod('plotGraph',signature = 'FunctionalEnrichment',
           function(x,comparison,type = 'diffusion'){
             en <- x@results[[comparison]]

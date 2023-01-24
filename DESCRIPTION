@@ -34,10 +34,8 @@ Remotes: jasenfinch/MFassign@devel,
         bioc::FELLA
 LazyData: true
 RoxygenNote: 7.2.3
-Collate: allClasses.R
+Collate: 
       allGenerics.R
-      access.R
-      enrichmentParameters.R
       assigned-data.R
       functional-enrichment.R
       organism-graph.R

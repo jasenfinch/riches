@@ -27,6 +27,7 @@ Imports:
         methods,
         mzAnnotation,
         purrr,
+        rlang,
         stringr,
         tibble,
         tidygraph,

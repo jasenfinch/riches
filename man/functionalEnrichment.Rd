@@ -9,33 +9,54 @@ functionalEnrichment(
   x,
   organism,
   methods = availableMethods(),
-  adduct_rules_table = mzAnnotation::adduct_rules(),
-  organism_graph = organismGraph(organism)
+  organism_data = organismData(organism),
+  adduct_rules_table = adduct_rules(),
+  ...
 )
 
 \S4method{functionalEnrichment}{RandomForest}(
   x,
   organism,
   methods = availableMethods(),
-  adduct_rules_table = mzAnnotation::adduct_rules(),
-  organism_graph = organismGraph(organism)
+  organism_data = organismData(organism),
+  adduct_rules_table = adduct_rules(),
+  ...
 )
 }
 \arguments{
-\item{x}{object of S4 class RandomForest}
+\item{x}{object of S4 class \code{RandomForest}}
+
+\item{organism}{the KEGG code for the organism of interest}
+
+\item{methods}{the enrichment techniques to build. Any returned by \code{availableMethods}.}
+
+\item{organism_data}{an object of S4 class \code{FELLA.DATA}}
+
+\item{adduct_rules_table}{the adduct ionisation rules for matching m/z features to KEGG compounds. Format should be as returned from \code{mzAnnotation::adduct_rules}.}
+
+\item{...}{arguments to pass to \code{metabolyseR::explanatoryFeatures}}
 }
 \description{
 Functional enrichment.
 }
 \examples{
-\dontrun{
-## Generate enrichment parameters
-parameters <- enrichmentParameters('bdi')
+## Perform random forest on the example data 
+random_forest <- assigned_data \%>\% 
+metabolyseR::randomForest(
+  cls = 'class'
+)
 
-## Select only "diffusion" enrichment
-functional(parameters) <- list(methods = 'diffusion')
-
-## Run functional enrichment
-fe <- functionalEnrichment(example_analysis,example_assignment,parameters)
-}
+## Perform functional enrichment analysis
+functionalEnrichment(
+  random_forest,
+  'bdi',
+  methods = 'hypergeom',
+  organism_data = organismData(
+    'bdi',
+    database_directory = system.file(
+      'bdi',
+      package = 'riches'),
+    internal_directory = FALSE
+  )
+)
 }

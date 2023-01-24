@@ -1,2 +1,2 @@
 
-globalVariables(c('.','ACCESSION_ID','Name','Adduct','MF','Method','Pvalue','com','FELLA','label','Type','Response'))
+globalVariables(c('.','MF','NAME','Type','com','comparison','label','name','nodes'))

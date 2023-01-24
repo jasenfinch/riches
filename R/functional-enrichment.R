@@ -11,47 +11,148 @@ availableMethods <- function(){
 
 setClass('FunctionalEnrichment',
          slots = list(
-           graph = 'FELLA.DATA',
+           organism_data = 'FELLA.DATA',
            hits = 'tbl_df',
            explanatory = 'tbl_df',
            results = 'list'
          ),
-         contains = 'RandomForest'
+         contains = c('RandomForest',
+                      'FELLA.DATA')
 )
+
+#' @importFrom methods as show
+
+setMethod('show',signature = 'FunctionalEnrichment',
+          function(object){
+            show(as(object,'RandomForest'))
+            show(as(object,'FELLA.DATA'))
+            message()
+            cat(nrow(hits(object)),'m/z features matched to KEGG compounds.\n')
+            cat(length(unique(explanatoryFeatures(object)$feature)),'explanatory m/z features.')
+            message()
+            
+            purrr::iwalk(enrichmentResults(object),
+                         ~{
+                           message()
+                           cat(.y,'\n')
+                           show(.x)
+                         })
+          })
+
+#' FunctionalEnrichment S4 class accessors
+#' @rdname accessors
+#' @description Accessor methods for the `FunctionalEnrichment` S4 class.
+#' @param x object of S4 class `FunctionalEnrichment`
+#' @return A tibble or a list of objects of `FELLA.USER` S4 class depending on the method used.
+#' @examples
+#' ## Perform random forest on the example data 
+#' random_forest <- assigned_data %>% 
+#' metabolyseR::randomForest(
+#'   cls = 'class'
+#' )
+#' 
+#' ## Perform functional enrichment analysis
+#' enrichment_results <- functionalEnrichment(
+#'   random_forest,
+#'   'bdi',
+#'   methods = 'hypergeom',
+#'   organism_data = organismData(
+#'     'bdi',
+#'     database_directory = system.file(
+#'       'bdi',
+#'       package = 'riches'),
+#'     internal_directory = FALSE
+#'   )
+#' )
+#' 
+#' ## Access the m/z feature KEGG compound matches
+#' hits(enrichment_results)
+#' 
+#' ## Access the explanatory features used for functional enrichment
+#' explanatoryFeatures(enrichment_results)
+#' 
+#' ## Access the functional enrichment results
+#' enrichmentResults(enrichment_results)
+#' @export
+
+setGeneric('hits',function(x)
+  standardGeneric('hits')
+)
+
+#' @rdname accessors
+
+setMethod('hits',signature = 'FunctionalEnrichment',
+          function(x){
+            x@hits
+          })
+
+#' @rdname accessors
+#' @export
+
+setMethod('explanatoryFeatures',signature = 'FunctionalEnrichment',
+          function(x){
+            x@explanatory
+          })
+
+#' @rdname accessors
+#' @export
+
+setGeneric('enrichmentResults',function(x)
+  standardGeneric('enrichmentResults')
+)
+
+#' @rdname accessors
+
+setMethod('enrichmentResults',signature = 'FunctionalEnrichment',
+          function(x){
+            x@results
+          })
 
 #' functional enrichment
 #' @rdname functionalEnrichment
 #' @description Functional enrichment.
-#' @param x object of S4 class RandomForest
-#' @param organism
-#' @param methods
-#' @param adduct_rules_table
-#' @param organism_graph
+#' @param x object of S4 class `RandomForest`
+#' @param organism the KEGG code for the organism of interest
+#' @param methods the enrichment techniques to build. Any returned by `availableMethods`.
+#' @param organism_data an object of S4 class `FELLA.DATA`
+#' @param adduct_rules_table the adduct ionisation rules for matching m/z features to KEGG compounds. Format should be as returned from `mzAnnotation::adduct_rules`.
+#' @param ... arguments to pass to `metabolyseR::explanatoryFeatures`
 #' @examples 
-#' \dontrun{
-#' ## Generate enrichment parameters
-#' parameters <- enrichmentParameters('bdi')
+#' ## Perform random forest on the example data 
+#' random_forest <- assigned_data %>% 
+#' metabolyseR::randomForest(
+#'   cls = 'class'
+#' )
 #' 
-#' ## Select only "diffusion" enrichment
-#' functional(parameters) <- list(methods = 'diffusion')
-#' 
-#' ## Run functional enrichment
-#' fe <- functionalEnrichment(example_analysis,example_assignment,parameters)
-#' }
+#' ## Perform functional enrichment analysis
+#' functionalEnrichment(
+#'   random_forest,
+#'   'bdi',
+#'   methods = 'hypergeom',
+#'   organism_data = organismData(
+#'     'bdi',
+#'     database_directory = system.file(
+#'       'bdi',
+#'       package = 'riches'),
+#'     internal_directory = FALSE
+#'   )
+#' )
 #' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
 #' @importFrom cheminf metaboliteDB descriptors filterEntries filterMF filterIP entries
-#' @importFrom assignments assignments
 #' @importFrom dplyr select distinct bind_rows
 #' @importFrom purrr map
 #' @importFrom metabolyseR analysisResults explanatoryFeatures
 #' @importFrom magrittr set_names
+#' @importFrom mzAnnotation adduct_rules
+#' @importFrom methods new
 #' @export
 
 setGeneric('functionalEnrichment',function(x,
                                            organism,
                                            methods = availableMethods(),
-                                           adduct_rules_table = mzAnnotation::adduct_rules(),
-                                           organism_graph = organismGraph(organism))
+                                           organism_data = organismData(organism),
+                                           adduct_rules_table = adduct_rules(),
+                                           ...)
   standardGeneric('functionalEnrichment')
 )
 
@@ -64,46 +165,29 @@ setMethod(
     x,
     organism,
     methods = availableMethods(),
-    adduct_rules_table = mzAnnotation::adduct_rules(),
-    organism_graph = organismGraph(organism)
+    organism_data = organismData(organism),
+    adduct_rules_table = adduct_rules(),
+    ...
   ){
     
-    organism_compounds <- organismCompounds(organism_graph)
+    methods = match.arg(methods,
+                        choices = availableMethods(),
+                        several.ok = TRUE)
     
-    organism_database <- metabolites %>%
-      filterEntries(organism_compounds$name) 
-    
-    feature_assignments <- x %>% 
-      extractAssignments() %>% 
-      filter(!is.na(MF))
-    
-    mf_hits <- feature_assignments %>%
-      dplyr::rowwise() %>% 
-      dplyr::group_map(~{
-        adduct_rule <- adduct_rules_table %>% 
-          filter(Name == .x$adduct) %>% 
-          .$Rule %>% 
-          rlang::parse_expr()
-        
-        organism_database %>%
-          filterMF(.x$MF) %>%
-          filterIP(rule = !!adduct_rule) %>%
-          entries() %>%
-          mutate(name = .x$name,
-                 feature = .x$feature,
-                 adduct = .x$adduct)
-      }) %>%
-      bind_rows()
+    mf_hits <- pips(x,
+                    organism_data,
+                    adduct_rules_table)
     
     background_compounds <- mf_hits$ID %>%
       unique()
     
-    explanatory_features <- x %>%
-      explanatoryFeatures()
+    explanatory_features <- explanatoryFeatures(x,...)
     
     enrichment_results <- explanatory_features %>%
       dplyr::group_by(comparison) %>% 
       dplyr::group_map(~{
+        message()
+        message(.x$response[1])
         message(.x$comparison[1])
         
         explanatory_compounds <- mf_hits %>%
@@ -115,36 +199,40 @@ setMethod(
           comparison_enrichment <- defineCompounds(
             compounds = explanatory_compounds,
             compoundsBackground = background_compounds,
-            data = organism_graph)
+            data = organism_data)
           
           if ('hypergeom' %in% methods) {
             comparison_enrichment <- comparison_enrichment %>%
-              runHypergeom(data = organism_graph)
+              runHypergeom(data = organism_data)
           }
           
           if ('diffusion' %in% methods) {
             comparison_enrichment <- comparison_enrichment %>%
-              runDiffusion(data = organism_graph)    
+              runDiffusion(data = organism_data)    
           }
           
           if ('pagerank'%in% methods) {
             comparison_enrichment <- comparison_enrichment %>%
-              runPagerank(data = organism_graph)
+              runPagerank(data = organism_data)
           }
           
           return(comparison_enrichment)
         } else {
-          message('No explanatory features assigned.')
+          message('No assigned explanatory m/z features matched to KEGG compounds.')
         }
       },.keep = TRUE) %>% 
-      set_names(unique(explanatory_features$comparison))
+      set_names(explanatory_features$comparison %>% 
+                  unique())
     
     
-    new('FunctionalEnrichment',
-        graph = organism_graph,
-        hits = mf_hits,
-        explanatory = explanatory_features,
-        results = enrichment_results
+    results <- new(
+      'FunctionalEnrichment',
+      x,
+      organism_data,
+      hits = mf_hits,
+      explanatory = explanatory_features,
+      results = enrichment_results
     )            
     
+    return(results)
   })

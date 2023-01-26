@@ -6,6 +6,8 @@
 \alias{explanatoryFeatures,FunctionalEnrichment-method}
 \alias{enrichmentResults}
 \alias{enrichmentResults,FunctionalEnrichment-method}
+\alias{generateResultsTable}
+\alias{generateResultsTable,FunctionalEnrichment-method}
 \title{FunctionalEnrichment S4 class accessors}
 \usage{
 hits(x)
@@ -17,9 +19,19 @@ hits(x)
 enrichmentResults(x)
 
 \S4method{enrichmentResults}{FunctionalEnrichment}(x)
+
+generateResultsTable(x, method = availableMethods(), nlimit = 250, ...)
+
+\S4method{generateResultsTable}{FunctionalEnrichment}(x, method = availableMethods(), nlimit = 250)
 }
 \arguments{
 \item{x}{object of S4 class \code{FunctionalEnrichment}}
+
+\item{method}{the method results to access. One of \code{availableMethods}.}
+
+\item{nlimit}{argument to pass to argument \code{nlimit} of \code{FELLA::generateResultsTable}. Limits the order of the sub-graph solutions for methods \code{diffusion} and \code{pagerank}.}
+
+\item{...}{ignored}
 }
 \value{
 A tibble or a list of objects of \code{FELLA.USER} S4 class depending on the method used.
@@ -54,6 +66,9 @@ hits(enrichment_results)
 ## Access the explanatory features used for functional enrichment
 explanatoryFeatures(enrichment_results)
 
-## Access the functional enrichment results
+## Access the FELLA.USER functional enrichment object
 enrichmentResults(enrichment_results)
+
+## Extract a table of enrichment results
+generateResultsTable(enrichment_results)
 }

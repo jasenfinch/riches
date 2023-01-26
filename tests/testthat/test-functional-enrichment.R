@@ -22,5 +22,6 @@ test_that('functional enrichment works for RandomForest class',{
   expect_s3_class(hits(enrichment_results),'tbl_df')
   expect_s3_class(explanatoryFeatures(enrichment_results),'tbl_df')
   expect_type(enrichmentResults(enrichment_results),'list')
+  expect_s3_class(generateResultsTable(enrichment_results),'tbl_df')
   expect_output(show(enrichment_results),'Random forest')
 })

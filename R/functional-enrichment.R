@@ -43,6 +43,9 @@ setMethod('show',signature = 'FunctionalEnrichment',
 #' @rdname accessors
 #' @description Accessor methods for the `FunctionalEnrichment` S4 class.
 #' @param x object of S4 class `FunctionalEnrichment`
+#' @param method the method results to access. One of `availableMethods`.
+#' @param nlimit argument to pass to argument `nlimit` of `FELLA::generateResultsTable`. Limits the order of the sub-graph solutions for methods `diffusion` and `pagerank`. 
+#' @param ... ignored
 #' @return A tibble or a list of objects of `FELLA.USER` S4 class depending on the method used.
 #' @examples
 #' ## Perform random forest on the example data 
@@ -71,8 +74,11 @@ setMethod('show',signature = 'FunctionalEnrichment',
 #' ## Access the explanatory features used for functional enrichment
 #' explanatoryFeatures(enrichment_results)
 #' 
-#' ## Access the functional enrichment results
+#' ## Access the FELLA.USER functional enrichment object
 #' enrichmentResults(enrichment_results)
+#'
+#' ## Extract a table of enrichment results
+#' generateResultsTable(enrichment_results)
 #' @export
 
 setGeneric('hits',function(x)
@@ -106,6 +112,44 @@ setGeneric('enrichmentResults',function(x)
 setMethod('enrichmentResults',signature = 'FunctionalEnrichment',
           function(x){
             x@results
+          })
+
+#' @rdname accessors
+#' @export
+
+setGeneric('generateResultsTable',function(
+    x,
+    method = availableMethods(),
+    nlimit = 250,
+    ...)
+  standardGeneric('generateResultsTable')
+)
+
+#' @rdname accessors
+#' @importFrom FELLA generateResultsTable
+
+setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
+          function(x,
+                   method = availableMethods(),
+                   nlimit = 250){
+
+            method <- match.arg(
+              method,
+              choices = availableMethods()
+            )
+
+            x %>%
+              enrichmentResults() %>%
+              map(
+                ~FELLA::generateResultsTable(
+                  method = method,
+                  nlimit = nlimit,
+                  object = .x,
+                  data = x
+                ) %>%
+                  tibble::as_tibble()
+              ) %>%
+              bind_rows(.id = 'comparison')
           })
 
 #' functional enrichment

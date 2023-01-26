@@ -144,6 +144,7 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
                 ~FELLA::generateResultsTable(
                   method = method,
                   nlimit = nlimit,
+                  LabelLengthAtPlot = 50,
                   object = .x,
                   data = x
                 ) %>%

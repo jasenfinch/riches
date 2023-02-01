@@ -150,7 +150,7 @@ setGeneric('structuralEnrichment',function(x,
   standardGeneric('structuralEnrichment'))
 
 #' @rdname structuralEnrichment
-#' @importFrom dplyr inner_join group_by count group_map rowwise bind_cols relocate arrange
+#' @importFrom dplyr inner_join group_by count group_map rowwise bind_cols relocate arrange mutate
 #' @importFrom tidyr gather drop_na
 #' @importFrom tidyselect last_col
 #' @importFrom metabolyseR nFeatures

@@ -127,6 +127,7 @@ setGeneric('generateResultsTable',function(
 
 #' @rdname functional-accessors
 #' @importFrom FELLA generateResultsTable
+#' @importFrom tibble tibble
 
 setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
           function(x,

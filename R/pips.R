@@ -1,7 +1,7 @@
 
 #' @importFrom metabolyseR features
 #' @importFrom tidyr separate
-#' @importFrom dplyr across
+#' @importFrom dplyr across everything
 
 extractAssignments <- function(x){
   feature_assignments <- tibble(
@@ -15,6 +15,7 @@ extractAssignments <- function(x){
       remove = FALSE
     ) %>% 
     mutate(across(
+      .cols = everything(),
       .fns = ~replace(.x,
                       .x == "",
                       NA)

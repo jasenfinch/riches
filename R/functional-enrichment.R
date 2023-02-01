@@ -40,7 +40,7 @@ setMethod('show',signature = 'FunctionalEnrichment',
           })
 
 #' FunctionalEnrichment S4 class accessors
-#' @rdname accessors
+#' @rdname functional-accessors
 #' @description Accessor methods for the `FunctionalEnrichment` S4 class.
 #' @param x object of S4 class `FunctionalEnrichment`
 #' @param method the method results to access. One of `availableMethods`.
@@ -85,14 +85,14 @@ setGeneric('hits',function(x)
   standardGeneric('hits')
 )
 
-#' @rdname accessors
+#' @rdname functional-accessors
 
 setMethod('hits',signature = 'FunctionalEnrichment',
           function(x){
             x@hits
           })
 
-#' @rdname accessors
+#' @rdname functional-accessors
 #' @export
 
 setMethod('explanatoryFeatures',signature = 'FunctionalEnrichment',
@@ -100,21 +100,21 @@ setMethod('explanatoryFeatures',signature = 'FunctionalEnrichment',
             x@explanatory
           })
 
-#' @rdname accessors
+#' @rdname functional-accessors
 #' @export
 
 setGeneric('enrichmentResults',function(x)
   standardGeneric('enrichmentResults')
 )
 
-#' @rdname accessors
+#' @rdname functional-accessors
 
 setMethod('enrichmentResults',signature = 'FunctionalEnrichment',
           function(x){
             x@results
           })
 
-#' @rdname accessors
+#' @rdname functional-accessors
 #' @export
 
 setGeneric('generateResultsTable',function(
@@ -125,7 +125,7 @@ setGeneric('generateResultsTable',function(
   standardGeneric('generateResultsTable')
 )
 
-#' @rdname accessors
+#' @rdname functional-accessors
 #' @importFrom FELLA generateResultsTable
 
 setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
@@ -153,7 +153,7 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
               bind_rows(.id = 'comparison')
           })
 
-#' functional enrichment
+#' Functional enrichment
 #' @rdname functionalEnrichment
 #' @description Functional enrichment.
 #' @param x object of S4 class `RandomForest`

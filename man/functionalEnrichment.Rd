@@ -3,7 +3,7 @@
 \name{functionalEnrichment}
 \alias{functionalEnrichment}
 \alias{functionalEnrichment,RandomForest-method}
-\title{functional enrichment}
+\title{Functional enrichment}
 \usage{
 functionalEnrichment(
   x,

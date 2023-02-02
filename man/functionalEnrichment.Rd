@@ -9,6 +9,7 @@ functionalEnrichment(
   x,
   organism,
   methods = availableMethods(),
+  split = c("none", "trends"),
   organism_data = organismData(organism),
   adduct_rules_table = adduct_rules(),
   ...
@@ -18,6 +19,7 @@ functionalEnrichment(
   x,
   organism,
   methods = availableMethods(),
+  split = c("none", "trends"),
   organism_data = organismData(organism),
   adduct_rules_table = adduct_rules(),
   ...
@@ -30,14 +32,34 @@ functionalEnrichment(
 
 \item{methods}{the enrichment techniques to build. Any returned by \code{availableMethods}.}
 
+\item{split}{split the explanatory features into further groups based on their trends. See details.}
+
 \item{organism_data}{an object of S4 class \code{FELLA.DATA}}
 
 \item{adduct_rules_table}{the adduct ionisation rules for matching m/z features to KEGG compounds. Format should be as returned from \code{mzAnnotation::adduct_rules}.}
 
 \item{...}{arguments to pass to \code{metabolyseR::explanatoryFeatures}}
 }
+\value{
+An object of S4 class \code{FunctionalEnrichment}.
+}
 \description{
 Functional enrichment.
+}
+\details{
+For argument \code{split = 'trends'}, the explanatory features can be split into further groups
+based on their trends. This is not supported for unsupervised random forest.
+
+For random forest classification, this is for binary comparisons only. Functional enrichment
+is performed seperately on the up and down regulated explanatory features for each comparison. The
+\verb{up regulated} and \verb{down regulated} groups are based on the trends of log2 ratios between
+the comparison classes. \verb{up regulated} explanatory features have a higher median intensity
+in the right-hand class compared to the left-hand class of the comparison. The opposite is true
+for the \verb{down regulated} explanatory features.
+
+For random forest regression, the explanatory features are split based on their Spearman's
+correlation coefficient with the response variable prior to functional enrichment analysis
+giving \verb{positively correlated} and \verb{negatively correlated} subgroups.
 }
 \examples{
 ## Perform random forest on the example data 

@@ -159,9 +159,26 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
 #' @param x object of S4 class `RandomForest`
 #' @param organism the KEGG code for the organism of interest
 #' @param methods the enrichment techniques to build. Any returned by `availableMethods`.
+#' @param split split the explanatory features into further groups based on their trends. See details.
 #' @param organism_data an object of S4 class `FELLA.DATA`
 #' @param adduct_rules_table the adduct ionisation rules for matching m/z features to KEGG compounds. Format should be as returned from `mzAnnotation::adduct_rules`.
 #' @param ... arguments to pass to `metabolyseR::explanatoryFeatures`
+#' @details 
+#' For argument `split = 'trends'`, the explanatory features can be split into further groups 
+#' based on their trends. This is not supported for unsupervised random forest.
+#' 
+#' For random forest classification, this is for binary comparisons only. Functional enrichment 
+#' is performed seperately on the up and down regulated explanatory features for each comparison. The 
+#' `up regulated` and `down regulated` groups are based on the trends of log2 ratios between 
+#' the comparison classes. `up regulated` explanatory features have a higher median intensity 
+#' in the right-hand class compared to the left-hand class of the comparison. The opposite is true
+#' for the `down regulated` explanatory features.
+#' 
+#' For random forest regression, the explanatory features are split based on their Spearman's 
+#' correlation coefficient with the response variable prior to functional enrichment analysis
+#' giving `positively correlated` and `negatively correlated` subgroups.
+#'  
+#' @return An object of S4 class `FunctionalEnrichment`.
 #' @examples 
 #' ## Perform random forest on the example data 
 #' random_forest <- assigned_data %>% 
@@ -184,7 +201,7 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
 #' )
 #' @importFrom FELLA defineCompounds runHypergeom runDiffusion runPagerank
 #' @importFrom cheminf metaboliteDB descriptors filterEntries filterMF filterIP entries
-#' @importFrom dplyr select distinct bind_rows
+#' @importFrom dplyr select distinct bind_rows group_keys
 #' @importFrom purrr map
 #' @importFrom metabolyseR analysisResults explanatoryFeatures type
 #' @importFrom magrittr set_names
@@ -195,6 +212,7 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
 setGeneric('functionalEnrichment',function(x,
                                            organism,
                                            methods = availableMethods(),
+                                           split = c('none','trends'),
                                            organism_data = organismData(organism),
                                            adduct_rules_table = adduct_rules(),
                                            ...)
@@ -210,6 +228,7 @@ setMethod(
     x,
     organism,
     methods = availableMethods(),
+    split = c('none','trends'),
     organism_data = organismData(organism),
     adduct_rules_table = adduct_rules(),
     ...
@@ -217,9 +236,21 @@ setMethod(
     
     rf_type <- type(x)
     
-    methods = match.arg(methods,
+    methods <- match.arg(methods,
                         choices = availableMethods(),
                         several.ok = TRUE)
+    
+    split <- match.arg(split,
+                       choices = c(
+                         'none',
+                         'trends'
+                       ))
+    
+    explanatory_features <- explanatoryFeatures(x,...)
+    
+    if (split == 'trends'){
+      explanatory_features <- trends(x,explanatory_features)
+    }
     
     mf_hits <- pips(x,
                     organism_data,
@@ -227,8 +258,6 @@ setMethod(
     
     background_compounds <- mf_hits$ID %>%
       unique()
-    
-    explanatory_features <- explanatoryFeatures(x,...)
     
     if (rf_type == 'classification'){
       explanatory_features <- explanatory_features %>% 
@@ -239,7 +268,11 @@ setMethod(
       explanatory_features <- explanatory_features %>% 
         group_by(response)
     }
-  
+    
+    if (split == 'trends'){
+      explanatory_features <- explanatory_features %>% 
+        group_by(trend,.add = TRUE)
+    }
     
     enrichment_results <- explanatory_features %>%
       dplyr::group_map(~{
@@ -251,6 +284,10 @@ setMethod(
         
         if (rf_type == 'classification'){
           message(.x$comparison[1]) 
+        }
+        
+        if (split == 'trends'){
+          message(.x$trend[1]) 
         }
         
         explanatory_compounds <- mf_hits %>%
@@ -285,10 +322,14 @@ setMethod(
         }
       },.keep = TRUE)
     
-    if (rf_type == 'classification') {
+    
+    if (rf_type != 'unsupervised') {
+      group_names <- group_keys(explanatory_features) %>% 
+        tidyr::unite(name) %>% 
+        .$name
+      
       enrichment_results <- enrichment_results %>% 
-        set_names(explanatory_features$comparison %>% 
-                                        unique())
+        set_names(group_names)
     }
     
     

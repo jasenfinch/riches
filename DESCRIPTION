@@ -15,12 +15,11 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Depends: R (>= 3.5.0)
 Imports: 
+        broom,
         cheminf,
+        construction,
         dplyr,
         FELLA,
-        ggplot2,
-        ggraph,
-        ggthemes,
         igraph,
         magrittr,
         metabolyseR,
@@ -31,10 +30,12 @@ Imports:
         stringr,
         tibble,
         tidygraph,
-        tidyr
+        tidyr,
+        tidyselect
 Remotes: jasenfinch/MFassign@devel,
         jasenfinch/mzAnnotation@devel,
         jasenfinch/cheminf,
+        jasenfinch/construction@devel,
         jasenfinch/metabolyseR@devel,
         bioc::FELLA
 LazyData: true

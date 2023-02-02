@@ -140,16 +140,18 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
 
             x %>%
               enrichmentResults() %>%
-              map(
-                ~FELLA::generateResultsTable(
-                  method = method,
-                  nlimit = nlimit,
-                  LabelLengthAtPlot = 50,
-                  object = .x,
-                  data = x
-                ) %>%
-                  tibble::as_tibble()
-              ) %>%
+              map(~{
+                if (!is.null(.x)){
+                  FELLA::generateResultsTable(
+                    method = method,
+                    nlimit = nlimit,
+                    LabelLengthAtPlot = 50,
+                    object = .x,
+                    data = x
+                  ) %>%
+                    tibble::as_tibble() 
+                }
+              }) %>%
               bind_rows(.id = 'comparison')
           })
 

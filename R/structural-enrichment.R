@@ -150,7 +150,7 @@ setGeneric('structuralEnrichment',function(x,
   standardGeneric('structuralEnrichment'))
 
 #' @rdname structuralEnrichment
-#' @importFrom dplyr inner_join group_by count group_map rowwise bind_cols relocate arrange mutate
+#' @importFrom dplyr inner_join group_by count group_map rowwise bind_cols relocate arrange mutate any_of
 #' @importFrom tidyr gather drop_na
 #' @importFrom tidyselect last_col
 #' @importFrom metabolyseR nFeatures
@@ -176,7 +176,7 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
               count()
             
             explanatory_classifications <- explanatoryFeatures(x,...) %>% 
-              select(-metric,-value) %>% 
+              select(-metric,-value,-any_of(c('p-value','adjusted_p-value'))) %>% 
               left_join(feature_classifications,
                         by = 'feature') 
             

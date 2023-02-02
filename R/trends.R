@@ -77,10 +77,10 @@ ratio <- function(x,explanatory_features){
         )
     } %>% 
     gather(feature,intensity,-!!explanatory_features$response[1]) %>% 
-    group_by(class,feature) %>% 
+    group_by(!!sym(explanatory_features$response[1]),feature) %>% 
     summarise(median = median(intensity),
               .groups = 'drop') %>% 
-    spread(class,median)
+    spread(!!explanatory_features$response[1],median)
   
   ratios <- comparisons %>% 
     left_join(explanatory_feature_data,

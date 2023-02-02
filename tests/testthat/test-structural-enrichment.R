@@ -3,7 +3,9 @@ test_that("structural enrichment works for random forest classification", {
   random_forest <- assigned_data %>% 
     metabolyseR::randomForest(
       cls = 'class',
-      binary = TRUE
+      comparisons = list(
+        class = 'ABR1~BD21'
+      )
     )
   
   structural_enrichment <- structuralEnrichment(

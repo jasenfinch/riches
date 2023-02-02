@@ -2,6 +2,7 @@
 #' @importFrom metabolyseR features
 #' @importFrom tidyr separate
 #' @importFrom dplyr across everything
+#' @importFrom tibble tibble
 
 extractAssignments <- function(x){
   feature_assignments <- tibble(

@@ -127,7 +127,6 @@ setGeneric('generateResultsTable',function(
 
 #' @rdname functional-accessors
 #' @importFrom FELLA generateResultsTable
-#' @importFrom tibble tibble
 
 setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
           function(x,
@@ -187,7 +186,7 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
 #' @importFrom cheminf metaboliteDB descriptors filterEntries filterMF filterIP entries
 #' @importFrom dplyr select distinct bind_rows
 #' @importFrom purrr map
-#' @importFrom metabolyseR analysisResults explanatoryFeatures
+#' @importFrom metabolyseR analysisResults explanatoryFeatures type
 #' @importFrom magrittr set_names
 #' @importFrom mzAnnotation adduct_rules
 #' @importFrom methods new
@@ -216,6 +215,8 @@ setMethod(
     ...
   ){
     
+    rf_type <- type(x)
+    
     methods = match.arg(methods,
                         choices = availableMethods(),
                         several.ok = TRUE)
@@ -229,12 +230,28 @@ setMethod(
     
     explanatory_features <- explanatoryFeatures(x,...)
     
+    if (rf_type == 'classification'){
+      explanatory_features <- explanatory_features %>% 
+        group_by(reponse,comparison)
+    }
+    
+    if (rf_type == 'regression'){
+      explanatory_features <- explanatory_features %>% 
+        group_by(response)
+    }
+  
+    
     enrichment_results <- explanatory_features %>%
-      dplyr::group_by(comparison) %>% 
       dplyr::group_map(~{
         message()
-        message(.x$response[1])
-        message(.x$comparison[1])
+        
+        if (rf_type != 'unsupervised'){
+          message(.x$response[1])
+        }
+        
+        if (rf_type == 'classification'){
+          message(.x$comparison[1]) 
+        }
         
         explanatory_compounds <- mf_hits %>%
           filter(name %in% .x$feature) %>%
@@ -266,9 +283,12 @@ setMethod(
         } else {
           message('No assigned explanatory m/z features matched to KEGG compounds.')
         }
-      },.keep = TRUE) %>% 
-      set_names(explanatory_features$comparison %>% 
-                  unique())
+      },.keep = TRUE)
+    
+    if (rf_type == 'classification') {
+      enrichment_results <- set_names(explanatory_features$comparison %>% 
+                                        unique())
+    }
     
     
     results <- new(

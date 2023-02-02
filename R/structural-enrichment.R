@@ -161,6 +161,8 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
                    p_adjust_method = 'bonferroni',
                    ...){
             
+            rf_type <- type(x)
+            
             feature_classifications <- structural_classifications %>% 
               select(-Name) %>% 
               inner_join(featureInfo(x),
@@ -178,15 +180,42 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
               left_join(feature_classifications,
                         by = 'feature') 
             
+            if (rf_type == 'classification'){
+              explanatory_classifications <- explanatory_classifications %>% 
+                group_by(response,comparison)
+            }
+            
+            if (rf_type == 'regression'){
+              explanatory_classifications <- explanatory_classifications %>% 
+                group_by(response)
+            }
+            
             explanatory_totals <- explanatory_classifications %>% 
-              group_by(response,comparison) %>% 
               count()
             
-            explanatory_classification_totals <- explanatory_classifications %>% 
-              gather(level,classification,-response,-comparison,-feature) %>% 
-              drop_na() %>% 
-              group_by(response,comparison,level,classification) %>% 
-              count()
+            if (rf_type == 'classification'){
+              explanatory_classification_totals <- explanatory_classifications %>% 
+                gather(level,classification,-response,-comparison,-feature) %>% 
+                drop_na() %>% 
+                group_by(response,comparison,level,classification) %>% 
+                count()  
+            }
+            
+            if (rf_type == 'regression'){
+              explanatory_classification_totals <- explanatory_classifications %>% 
+                gather(level,classification,-response,-feature) %>% 
+                drop_na() %>% 
+                group_by(response,level,classification) %>% 
+                count()
+            }
+            
+            if (rf_type == 'unsupervised'){
+              explanatory_classification_totals <- explanatory_classifications %>% 
+                gather(level,classification,-feature) %>% 
+                drop_na() %>% 
+                group_by(level,classification) %>% 
+                count()
+            }
             
             contingency <- explanatory_classification_totals %>% 
               rename(`Explanatory & in class` = n) %>% 
@@ -194,8 +223,24 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
                         by = c('level','classification')) %>% 
               rename(`Not explanatory & in class` = n) %>% 
               mutate(`Not explanatory & in class` = `Not explanatory & in class` - 
-                       `Explanatory & in class`) %>% 
-              left_join(explanatory_totals,by = c('response','comparison')) %>% 
+                       `Explanatory & in class`)
+            
+            if (rf_type == 'classification'){
+              contingency <- contingency %>%
+                left_join(explanatory_totals,by = c('response','comparison'))
+            }
+            
+            if (rf_type == 'regression'){
+              contingency <- contingency %>%
+                left_join(explanatory_totals,by = c('response'))
+            }
+            
+            if (rf_type == 'unsupervised'){
+              contingency <- contingency %>%
+                mutate(n = explanatory_totals$n[1])
+            }
+            
+            contingency <- contingency %>% 
               rename(`Explanatory & not in class` = n) %>% 
               mutate(`Explanatory & not in class` = `Explanatory & not in class` - 
                        `Explanatory & in class`,
@@ -214,8 +259,19 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
                              .x$`Not explanatory & not in class`)
                 )
               ) %>% 
-              bind_rows() %>% 
-              group_by(response,comparison) %>% 
+              bind_rows()
+            
+            if (rf_type == 'classification'){
+              ora_results <- ora_results %>% 
+                group_by(response,comparison)
+            }
+            
+            if (rf_type == 'regression'){
+              ora_results <- ora_results %>% 
+                group_by(response)
+            }
+            
+            ora_results <- ora_results %>% 
               mutate(
                 adjusted.p.value = p.adjust(p.value,method = p_adjust_method)
               ) %>% 

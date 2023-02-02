@@ -384,10 +384,12 @@ setMethod('structuralEnrichment',signature = c('RandomForest','Construction'),
           function(x,
                    structural_classifications,
                    p_adjust_method = 'bonferroni',
+                   split = c('none','trends'),
                    ...){
             structural_classifications <- classifications(structural_classifications)
             
             structuralEnrichment(x = x,
                                  structural_classifications = structural_classifications,
-                                 p_adjust_method = p_adjust_method)
+                                 p_adjust_method = p_adjust_method,
+                                 split = split)
           })

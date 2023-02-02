@@ -177,7 +177,6 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
 #' For random forest regression, the explanatory features are split based on their Spearman's 
 #' correlation coefficient with the response variable prior to functional enrichment analysis
 #' giving `positively correlated` and `negatively correlated` subgroups.
-#'  
 #' @return An object of S4 class `FunctionalEnrichment`.
 #' @examples 
 #' ## Perform random forest on the example data 
@@ -191,6 +190,29 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
 #'   random_forest,
 #'   'bdi',
 #'   methods = 'hypergeom',
+#'   organism_data = organismData(
+#'     'bdi',
+#'     database_directory = system.file(
+#'       'bdi',
+#'       package = 'riches'),
+#'     internal_directory = FALSE
+#'   )
+#' )
+#' 
+#' ## An example using split trends
+#' ## Perform binary random forest classification on the example data 
+#' random_forest <- assigned_data %>% 
+#'   metabolyseR::randomForest(
+#'     cls = 'class',
+#'     binary = TRUE
+#'   )
+#' 
+#' ## Perform functional enrichment analysis
+#' functionalEnrichment(
+#'   random_forest,
+#'   'bdi',
+#'   methods = 'hypergeom',
+#'   split = 'trends',
 #'   organism_data = organismData(
 #'     'bdi',
 #'     database_directory = system.file(

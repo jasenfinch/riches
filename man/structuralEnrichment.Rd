@@ -9,6 +9,7 @@ structuralEnrichment(
   x,
   structural_classifications,
   p_adjust_method = "bonferroni",
+  split = c("none", "trends"),
   ...
 )
 
@@ -16,6 +17,7 @@ structuralEnrichment(
   x,
   structural_classifications,
   p_adjust_method = "bonferroni",
+  split = c("none", "trends"),
   ...
 )
 }
@@ -26,6 +28,8 @@ structuralEnrichment(
 
 \item{p_adjust_method}{the p-value adjustment method. One of those returned from \code{p.adjust.methods}.}
 
+\item{split}{split the explanatory features into further groups based on their trends. See details.}
+
 \item{...}{arguments to pass to \code{metabolyseR::explanatoryFeatures()}}
 }
 \value{
@@ -35,7 +39,22 @@ An object of S4 class \code{StructuralEnrichment}.
 Perform structural enrichment using over-representation analysis of explanatory \emph{m/z} features from random forest.
 }
 \details{
-Over-representation analysis is performed on the explanatory \emph{m/z} features for each structural class within each experimental class comparison using the Fisher's Exact Test.
+Over-representation analysis is performed on the explanatory \emph{m/z} features for each structural class
+within each experimental class comparison using the Fisher's Exact Test.
+
+For argument \code{split = 'trends'}, the explanatory features can be split into further groups
+based on their trends. This is not supported for unsupervised random forest.
+
+For random forest classification, this is for binary comparisons only. Functional enrichment
+is performed seperately on the up and down regulated explanatory features for each comparison. The
+\verb{up regulated} and \verb{down regulated} groups are based on the trends of log2 ratios between
+the comparison classes. \verb{up regulated} explanatory features have a higher median intensity
+in the right-hand class compared to the left-hand class of the comparison. The opposite is true
+for the \verb{down regulated} explanatory features.
+
+For random forest regression, the explanatory features are split based on their Spearman's
+correlation coefficient with the response variable prior to functional enrichment analysis
+giving \verb{positively correlated} and \verb{negatively correlated} subgroups.
 }
 \examples{
 ## Perform random forest on the example data 
@@ -48,5 +67,20 @@ random_forest <- assigned_data \%>\%
 structuralEnrichment(
   random_forest,
   structural_classifications
+)
+
+## An example using split trends
+## Perform random forest on the example data 
+random_forest <- assigned_data \%>\% 
+  metabolyseR::randomForest(
+    cls = 'class',
+    binary = TRUE
+  )
+
+## Perform structural enrichment analysis using the example structural classifications
+structuralEnrichment(
+  random_forest,
+  structural_classifications,
+  split = 'trends'
 )
 }

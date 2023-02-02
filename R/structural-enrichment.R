@@ -125,9 +125,25 @@ setMethod('enrichmentResults',signature = 'StructuralEnrichment',
 #' @param x an object of S4 class `RandomForest`
 #' @param structural_classifications the structral classifications corresponding to the *m/z* features present in the object specified for argument `x`. This should either be a tibble as returned by `construction::classifications()` or an object of S4 class `Construction`.
 #' @param p_adjust_method the p-value adjustment method. One of those returned from `p.adjust.methods`.
+#' @param split split the explanatory features into further groups based on their trends. See details.
 #' @param ... arguments to pass to `metabolyseR::explanatoryFeatures()` 
 #' @details 
-#' Over-representation analysis is performed on the explanatory *m/z* features for each structural class within each experimental class comparison using the Fisher's Exact Test.
+#' Over-representation analysis is performed on the explanatory *m/z* features for each structural class 
+#' within each experimental class comparison using the Fisher's Exact Test.
+#' 
+#' For argument `split = 'trends'`, the explanatory features can be split into further groups 
+#' based on their trends. This is not supported for unsupervised random forest.
+#' 
+#' For random forest classification, this is for binary comparisons only. Functional enrichment 
+#' is performed seperately on the up and down regulated explanatory features for each comparison. The 
+#' `up regulated` and `down regulated` groups are based on the trends of log2 ratios between 
+#' the comparison classes. `up regulated` explanatory features have a higher median intensity 
+#' in the right-hand class compared to the left-hand class of the comparison. The opposite is true
+#' for the `down regulated` explanatory features.
+#' 
+#' For random forest regression, the explanatory features are split based on their Spearman's 
+#' correlation coefficient with the response variable prior to functional enrichment analysis
+#' giving `positively correlated` and `negatively correlated` subgroups.
 #' @return An object of S4 class `StructuralEnrichment`.
 #' @examples 
 #' ## Perform random forest on the example data 
@@ -141,11 +157,27 @@ setMethod('enrichmentResults',signature = 'StructuralEnrichment',
 #'   random_forest,
 #'   structural_classifications
 #' )
+#' 
+#' ## An example using split trends
+#' ## Perform random forest on the example data 
+#' random_forest <- assigned_data %>% 
+#'   metabolyseR::randomForest(
+#'     cls = 'class',
+#'     binary = TRUE
+#'   )
+#' 
+#' ## Perform structural enrichment analysis using the example structural classifications
+#' structuralEnrichment(
+#'   random_forest,
+#'   structural_classifications,
+#'   split = 'trends'
+#' )
 #' @export
 
 setGeneric('structuralEnrichment',function(x,
                                            structural_classifications,
                                            p_adjust_method = 'bonferroni',
+                                           split = c('none','trends'),
                                            ...)
   standardGeneric('structuralEnrichment'))
 
@@ -159,9 +191,22 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
           function(x,
                    structural_classifications,
                    p_adjust_method = 'bonferroni',
+                   split = c('none','trends'),
                    ...){
             
             rf_type <- type(x)
+            
+            split <- match.arg(split,
+                               choices = c(
+                                 'none',
+                                 'trends'
+                               ))
+            
+            explanatory_features <- explanatoryFeatures(x,...)
+            
+            if (split == 'trends'){
+              explanatory_features <- trends(x,explanatory_features)
+            }
             
             feature_classifications <- structural_classifications %>% 
               select(-Name) %>% 
@@ -175,8 +220,9 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
               group_by(level,classification) %>% 
               count()
             
-            explanatory_classifications <- explanatoryFeatures(x,...) %>% 
-              select(-metric,-value,-any_of(c('p-value','adjusted_p-value'))) %>% 
+            explanatory_classifications <-  explanatory_features %>% 
+              select(-metric,-value,
+                     -any_of(c('p-value','adjusted_p-value','ratio','log2_ratio','correlation'))) %>% 
               left_join(feature_classifications,
                         by = 'feature') 
             
@@ -190,22 +236,48 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
                 group_by(response)
             }
             
+            if (split == 'trends'){
+              explanatory_classifications <- explanatory_classifications %>% 
+                group_by(trend,.add = TRUE)
+            }
+            
             explanatory_totals <- explanatory_classifications %>% 
               count()
             
             if (rf_type == 'classification'){
               explanatory_classification_totals <- explanatory_classifications %>% 
-                gather(level,classification,-response,-comparison,-feature) %>% 
+                gather(level,classification,
+                       -any_of(c(
+                         'response',
+                         'comparison',
+                         'feature',
+                         'trend'))
+                )%>% 
                 drop_na() %>% 
-                group_by(response,comparison,level,classification) %>% 
+                group_by(response,comparison,level,classification)
+              
+              if (split == 'trends'){
+                explanatory_classification_totals <- explanatory_classification_totals %>% 
+                  group_by(trend,.add = TRUE)
+              }
+              explanatory_classification_totals <- explanatory_classification_totals %>% 
                 count()  
             }
             
             if (rf_type == 'regression'){
               explanatory_classification_totals <- explanatory_classifications %>% 
-                gather(level,classification,-response,-feature) %>% 
+                gather(level,classification,
+                       -any_of(c('response',
+                                 'feature',
+                                 'trend'))) %>% 
                 drop_na() %>% 
-                group_by(response,level,classification) %>% 
+                group_by(response,level,classification)
+              
+              if (split == 'trends'){
+                explanatory_classification_totals <- explanatory_classification_totals %>% 
+                  group_by(trend,.add = TRUE)
+              }
+              explanatory_classification_totals <- explanatory_classification_totals %>% 
                 count()
             }
             
@@ -226,13 +298,25 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
                        `Explanatory & in class`)
             
             if (rf_type == 'classification'){
+              by <- c('response','comparison')
+              
+              if (split == 'trends'){
+                by <- c(by,'trend')
+              }
+              
               contingency <- contingency %>%
-                left_join(explanatory_totals,by = c('response','comparison'))
+                left_join(explanatory_totals,by = by)
             }
             
             if (rf_type == 'regression'){
+              by <- 'response'
+              
+              if (split == 'trends'){
+                by <- c(by,'trend')
+              }
+              
               contingency <- contingency %>%
-                left_join(explanatory_totals,by = c('response'))
+                left_join(explanatory_totals,by = by)
             }
             
             if (rf_type == 'unsupervised'){
@@ -271,6 +355,11 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
                 group_by(response)
             }
             
+            if (split == 'trends'){
+              ora_results <- ora_results %>% 
+                group_by(trend,.add = TRUE)
+            }
+            
             ora_results <- ora_results %>% 
               mutate(
                 adjusted.p.value = p.adjust(p.value,method = p_adjust_method)
@@ -281,11 +370,11 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
             
             results <- new('StructuralEnrichment',
                            x,
-                           explanatory = explanatoryFeatures(x,...),
+                           explanatory = explanatory_features,
                            classifications = feature_classifications,
                            results = ora_results)
             
-             return(results)
+            return(results)
           })
 
 #' @importFrom construction classifications

@@ -2,12 +2,14 @@
 test_that("structural enrichment works for random forest classification", {
   random_forest <- assigned_data %>% 
     metabolyseR::randomForest(
-      cls = 'class'
+      cls = 'class',
+      binary = TRUE
     )
   
   structural_enrichment <- structuralEnrichment(
     random_forest,
-    structural_classifications
+    structural_classifications,
+    split = 'trends'
   )
   
   expect_s4_class(structural_enrichment,'StructuralEnrichment')
@@ -23,6 +25,7 @@ test_that("structural enrichment works for random forest regression", {
   structural_enrichment <- structuralEnrichment(
     random_forest,
     structural_classifications,
+    split = 'trends',
     metric = '%IncMSE'
   )
   

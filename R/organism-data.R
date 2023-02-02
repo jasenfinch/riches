@@ -93,6 +93,7 @@ setGeneric('organismCompounds',function(organism_data){
 #' @importFrom igraph vertex.attributes
 #' @importFrom tibble as_tibble
 #' @importFrom purrr map_chr
+#' @importFrom tidygraph as_tbl_graph activate
 
 setMethod('organismCompounds',signature = 'FELLA.DATA',
           function(organism_data){

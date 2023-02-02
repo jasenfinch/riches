@@ -232,7 +232,7 @@ setMethod(
     
     if (rf_type == 'classification'){
       explanatory_features <- explanatory_features %>% 
-        group_by(reponse,comparison)
+        group_by(response,comparison)
     }
     
     if (rf_type == 'regression'){
@@ -286,7 +286,8 @@ setMethod(
       },.keep = TRUE)
     
     if (rf_type == 'classification') {
-      enrichment_results <- set_names(explanatory_features$comparison %>% 
+      enrichment_results <- enrichment_results %>% 
+        set_names(explanatory_features$comparison %>% 
                                         unique())
     }
     

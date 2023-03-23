@@ -1,5 +1,6 @@
 
 #' @importFrom broom tidy
+#' @importFrom stats fisher.test
 
 overrepresentation <- function(explanatory_in_class,
                                not_explanatory_in_class,
@@ -186,6 +187,7 @@ setGeneric('structuralEnrichment',function(x,
 #' @importFrom tidyr gather drop_na
 #' @importFrom tidyselect last_col
 #' @importFrom metabolyseR nFeatures
+#' @importFrom stats p.adjust
 
 setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
           function(x,
@@ -377,6 +379,7 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
             return(results)
           })
 
+#' @rdname structuralEnrichment
 #' @importFrom construction classifications
 #' @importFrom dplyr ungroup
 

@@ -48,7 +48,8 @@ checkComparisons <- function(explanatory_features){
 #' @importFrom metabolyseR sinfo keepFeatures dat
 #' @importFrom rlang sym
 #' @importFrom tidyr spread
-#' @importFrom dplyr summarise
+#' @importFrom dplyr summarise all_of
+#' @importFrom stats median
 
 ratio <- function(x,explanatory_features){
   
@@ -100,6 +101,8 @@ ratio <- function(x,explanatory_features){
   return(explanatory_features)
   
 }
+
+#' @importFrom stats cor
 
 correlation <- function(x,explanatory_features){
   correlations <- x %>% 

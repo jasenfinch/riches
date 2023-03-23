@@ -36,7 +36,8 @@ functionalEnrichment(
 
 \item{organism_data}{an object of S4 class \code{FELLA.DATA}}
 
-\item{adduct_rules_table}{the adduct ionisation rules for matching m/z features to KEGG compounds. Format should be as returned from \code{mzAnnotation::adduct_rules}.}
+\item{adduct_rules_table}{the adduct ionisation rules for matching m/z features to KEGG compounds.
+Format should be as returned from \code{mzAnnotation::adduct_rules}.}
 
 \item{...}{arguments to pass to \code{metabolyseR::explanatoryFeatures}}
 }
@@ -44,7 +45,8 @@ functionalEnrichment(
 An object of S4 class \code{FunctionalEnrichment}.
 }
 \description{
-Functional enrichment.
+Perform functional enrichment analyses of explanatory features using the
+\href{https://bioconductor.org/packages/release/bioc/html/FELLA.html}{{FELLA}} R package.
 }
 \details{
 For argument \code{split = 'trends'}, the explanatory features can be split into further groups

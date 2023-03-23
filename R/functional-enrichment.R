@@ -157,13 +157,15 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
 
 #' Functional enrichment
 #' @rdname functionalEnrichment
-#' @description Functional enrichment.
+#' @description Perform functional enrichment analyses of explanatory features using the 
+#' [{FELLA}](https://bioconductor.org/packages/release/bioc/html/FELLA.html) R package.
 #' @param x object of S4 class `RandomForest`
 #' @param organism the KEGG code for the organism of interest
 #' @param methods the enrichment techniques to build. Any returned by `availableMethods`.
 #' @param split split the explanatory features into further groups based on their trends. See details.
 #' @param organism_data an object of S4 class `FELLA.DATA`
-#' @param adduct_rules_table the adduct ionisation rules for matching m/z features to KEGG compounds. Format should be as returned from `mzAnnotation::adduct_rules`.
+#' @param adduct_rules_table the adduct ionisation rules for matching m/z features to KEGG compounds. 
+#' Format should be as returned from `mzAnnotation::adduct_rules`.
 #' @param ... arguments to pass to `metabolyseR::explanatoryFeatures`
 #' @details 
 #' For argument `split = 'trends'`, the explanatory features can be split into further groups 

@@ -6,7 +6,7 @@ overrepresentation <- function(explanatory_in_class,
                                not_explanatory_in_class,
                                explanatory_not_class,
                                not_explanatory_not_class){
-  contingency = matrix(
+  contingency <- matrix(
     c(explanatory_in_class,
       not_explanatory_in_class,
       explanatory_not_class,

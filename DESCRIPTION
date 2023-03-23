@@ -32,11 +32,11 @@ Imports:
         tidygraph,
         tidyr,
         tidyselect
-Remotes: jasenfinch/MFassign@devel,
-        jasenfinch/mzAnnotation@devel,
+Remotes: aberHRML/assignments,
+        aberHRML/mzAnnotation,
         jasenfinch/cheminf,
-        jasenfinch/construction@devel,
-        jasenfinch/metabolyseR@devel,
+        jasenfinch/construction,
+        jasenfinch/metabolyseR,
         bioc::FELLA
 LazyData: true
 RoxygenNote: 7.2.3

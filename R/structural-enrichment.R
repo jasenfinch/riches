@@ -394,5 +394,6 @@ setMethod('structuralEnrichment',signature = c('RandomForest','Construction'),
             structuralEnrichment(x = x,
                                  structural_classifications = structural_classifications,
                                  p_adjust_method = p_adjust_method,
-                                 split = split)
+                                 split = split,
+                                 ...)
           })

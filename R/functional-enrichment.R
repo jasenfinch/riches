@@ -172,11 +172,11 @@ setMethod('generateResultsTable',signature = 'FunctionalEnrichment',
 #' based on their trends. This is not supported for unsupervised random forest.
 #' 
 #' For random forest classification, this is for binary comparisons only. Functional enrichment 
-#' is performed seperately on the up and down regulated explanatory features for each comparison. The 
-#' `up regulated` and `down regulated` groups are based on the trends of log2 ratios between 
-#' the comparison classes. `up regulated` explanatory features have a higher median intensity 
+#' is performed seperately on the up and decreased explanatory features for each comparison. The 
+#' `increased` and `decreased` groups are based on the trends of log2 ratios between 
+#' the comparison classes. `increased` explanatory features have a higher median intensity 
 #' in the right-hand class compared to the left-hand class of the comparison. The opposite is true
-#' for the `down regulated` explanatory features.
+#' for the `decreased` explanatory features.
 #' 
 #' For random forest regression, the explanatory features are split based on their Spearman's 
 #' correlation coefficient with the response variable prior to functional enrichment analysis

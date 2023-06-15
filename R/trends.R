@@ -90,7 +90,7 @@ ratio <- function(x,explanatory_features){
            log2_ratio = log2(ratio)) %>% 
     select(comparison,feature,ratio,log2_ratio) %>%
     mutate(
-      trend = ifelse(log2_ratio < 0,'down regulated','up regulated')
+      trend = ifelse(log2_ratio < 0,'decreased','increased')
     )
   
   explanatory_features <- explanatory_features %>% 

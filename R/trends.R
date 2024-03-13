@@ -1,12 +1,15 @@
 
 trendType <- function(x){
-  rf_type <- type(x)
+  model_type <- type(x)
   
   switch(
-    rf_type,
+    model_type,
     unsupervised = stop('Trends cannot be used for unsuperised random forest.',call. = FALSE),
     classification = 'ratio',
-    regression = 'correlation'
+    regression = 'correlation',
+    `t-test` = 'ratio',
+    ANOVA = 'ratio',
+    `linear regression` = 'correlation'
   )
 }
 

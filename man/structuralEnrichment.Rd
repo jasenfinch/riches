@@ -4,6 +4,8 @@
 \alias{structuralEnrichment}
 \alias{structuralEnrichment,RandomForest,tbl_df-method}
 \alias{structuralEnrichment,RandomForest,Construction-method}
+\alias{structuralEnrichment,Univariate,ANY-method}
+\alias{structuralEnrichment,Univariate,Construction-method}
 \title{Structural enrichment}
 \usage{
 structuralEnrichment(
@@ -23,6 +25,22 @@ structuralEnrichment(
 )
 
 \S4method{structuralEnrichment}{RandomForest,Construction}(
+  x,
+  structural_classifications,
+  p_adjust_method = "bonferroni",
+  split = c("none", "trends"),
+  ...
+)
+
+\S4method{structuralEnrichment}{Univariate,ANY}(
+  x,
+  structural_classifications,
+  p_adjust_method = "bonferroni",
+  split = c("none", "trends"),
+  ...
+)
+
+\S4method{structuralEnrichment}{Univariate,Construction}(
   x,
   structural_classifications,
   p_adjust_method = "bonferroni",

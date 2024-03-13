@@ -49,3 +49,58 @@ test_that("structural enrichment works for unsupervised random forest", {
   expect_s4_class(structural_enrichment,'StructuralEnrichment')
   expect_output(show(structural_enrichment),'Unsupervised')
 })
+
+test_that("structural enrichment works for t-test", {
+  t_test <- assigned_data %>% 
+    metabolyseR::ttest(
+      cls = 'class',
+      comparisons = list(
+        class = 'ABR1~BD21'
+      )
+    )
+  
+  structural_enrichment <- structuralEnrichment(
+    t_test,
+    structural_classifications,
+    split = 'trends'
+  )
+  
+  expect_s4_class(structural_enrichment,'StructuralEnrichment')
+  expect_output(show(structural_enrichment),'Univariate')
+})
+
+test_that("structural enrichment works for anova", {
+  anova <- assigned_data %>% 
+    metabolyseR::anova(
+      cls = 'class',
+      comparisons = list(
+        class = 'ABR1~BD21'
+      )
+    )
+  
+  structural_enrichment <- structuralEnrichment(
+    anova,
+    structural_classifications,
+    split = 'trends'
+  )
+  
+  expect_s4_class(structural_enrichment,'StructuralEnrichment')
+  expect_output(show(structural_enrichment),'Univariate')
+})
+
+test_that("structural enrichment works for linear regression", {
+  lr <- assigned_data %>% 
+    metabolyseR::linearRegression(
+      cls = 'injOrder',
+    )
+  
+  structural_enrichment <- structuralEnrichment(
+    lr,
+    structural_classifications,
+    split = 'trends',
+    threshold  = 0.2
+  )
+  
+  expect_s4_class(structural_enrichment,'StructuralEnrichment')
+  expect_output(show(structural_enrichment),'Univariate')
+})

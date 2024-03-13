@@ -47,11 +47,17 @@ setClass('StructuralEnrichment',
            classifications = 'tbl_df',
            results = 'tbl_df'
          ),
-         contains = c('RandomForest'))
+         contains = c('RandomForest','Univariate'))
 
 setMethod('show',signature = 'StructuralEnrichment',
           function(object){
-            show(as(object,'RandomForest'))
+            object_type <- type(object)
+
+            if (object_type %in% c('t-test','ANOVA','linear regression')){
+              show(as(object,'Univariate'))
+            } else {
+              show(as(object,'RandomForest'))
+            }
             
             cat(length(unique(explanatoryFeatures(object)$feature)),'explanatory m/z features.\n')
             structuralClassifications(object) %>% 
@@ -384,6 +390,180 @@ setMethod('structuralEnrichment',signature = c('RandomForest','tbl_df'),
 #' @importFrom dplyr ungroup
 
 setMethod('structuralEnrichment',signature = c('RandomForest','Construction'),
+          function(x,
+                   structural_classifications,
+                   p_adjust_method = 'bonferroni',
+                   split = c('none','trends'),
+                   ...){
+            structural_classifications <- classifications(structural_classifications)
+            
+            structuralEnrichment(x = x,
+                                 structural_classifications = structural_classifications,
+                                 p_adjust_method = p_adjust_method,
+                                 split = split,
+                                 ...)
+          })
+
+#' @rdname structuralEnrichment
+
+setMethod('structuralEnrichment',signature = 'Univariate',
+          function(x,
+                   structural_classifications,
+                   p_adjust_method = 'bonferroni',
+                   split = c('none','trends'),
+                   ...){
+
+            model_type <- type(x)
+
+            split <- match.arg(split,
+                               choices = c(
+                                 'none',
+                                 'trends'
+                               ))
+            
+            explanatory_features <- explanatoryFeatures(x,...)
+
+            if (nrow(explanatory_features) == 0) {
+              stop('No explanatory features identified at the specified threshold.',call. = FALSE)
+            }
+            
+            if (split == 'trends'){
+              explanatory_features <- trends(x,explanatory_features)
+            }
+            
+            feature_classifications <- structural_classifications %>% 
+              select(-Name) %>% 
+              inner_join(featureInfo(x),
+                         by = c('Feature', 'MF', 'Isotope', 'Adduct')) %>% 
+              select(feature = Name,kingdom:last_col(offset = 2))
+            
+            background_classification_totals <- feature_classifications %>% 
+              gather(level,classification,-feature) %>% 
+              drop_na() %>% 
+              group_by(level,classification) %>% 
+              count()
+            
+            explanatory_classifications <-  explanatory_features %>% 
+              select(
+                -any_of(c('statistic','p.value','adjusted.p.value','ratio',
+                          'log2_ratio','correlation','parameter','method',
+                          'alternative','df','meansq','sumsq','term','AIC',
+                          'BIC','adj.r.squared','r.squared','deviance','df.residual',
+                          'logLik','nobs','sigma')),
+                -contains('estimate'),
+                -contains('conf')
+                ) %>% 
+              left_join(feature_classifications,
+                        by = 'feature')
+
+            if (model_type != 'linear regression'){
+              explanatory_classifications <- explanatory_classifications %>%
+              group_by(response,comparison)
+            } else {
+              explanatory_classifications <- explanatory_classifications %>%
+              group_by(response)
+            }
+
+            if (split == 'trends'){
+              explanatory_classifications <- explanatory_classifications %>% 
+                group_by(trend,.add = TRUE)
+            }
+
+            explanatory_totals <- explanatory_classifications %>% 
+              count()
+
+            explanatory_classification_totals <- explanatory_classifications %>% 
+              gather(level,classification,
+                     -any_of(c(
+                       'response',
+                       'comparison',
+                       'feature',
+                       'trend'))
+              )%>% 
+              drop_na() 
+
+            if (model_type != 'linear regression'){
+              explanatory_classification_totals <- explanatory_classification_totals %>%
+                group_by(response,comparison,level,classification)
+            } else {
+              explanatory_classification_totals <- explanatory_classification_totals %>%
+                group_by(response,level,classification)
+            }
+            
+            if (split == 'trends'){
+              explanatory_classification_totals <- explanatory_classification_totals %>% 
+                group_by(trend,.add = TRUE)
+            }
+
+            explanatory_classification_totals <- explanatory_classification_totals %>% 
+              count()  
+
+            contingency <- explanatory_classification_totals %>% 
+              rename(`Explanatory & in class` = n) %>% 
+              left_join(background_classification_totals,
+                        by = c('level','classification')) %>% 
+              rename(`Not explanatory & in class` = n) %>% 
+              mutate(`Not explanatory & in class` = `Not explanatory & in class` - 
+                       `Explanatory & in class`)
+
+            if (model_type != 'linear regression'){
+              by <- c('response','comparison')
+            } else {
+              by <- c('response')
+            }
+            
+            if (split == 'trends'){
+              by <- c(by,'trend')
+            }
+            
+            contingency <- contingency %>%
+              left_join(explanatory_totals,by = by) %>%
+              rename(`Explanatory & not in class` = n) %>% 
+              mutate(`Explanatory & not in class` = `Explanatory & not in class` - 
+                       `Explanatory & in class`,
+                     `Not explanatory & not in class` = nFeatures(x) - 
+                       (`Explanatory & in class` + `Not explanatory & in class`) - 
+                       `Explanatory & not in class`)
+            
+            ora_results <- contingency %>% 
+              rowwise() %>% 
+              group_map(
+                ~bind_cols(.x,
+                           overrepresentation(
+                             .x$`Explanatory & in class`,
+                             .x$`Not explanatory & in class`,
+                             .x$`Explanatory & not in class`,
+                             .x$`Not explanatory & not in class`)
+                )
+              ) %>% 
+              bind_rows()
+
+            if (split == 'trends'){
+              ora_results <- ora_results %>% 
+                group_by(trend,.add = TRUE)
+            }
+            
+            ora_results <- ora_results %>% 
+              mutate(
+                adjusted.p.value = p.adjust(p.value,method = p_adjust_method)
+              ) %>% 
+              relocate(adjusted.p.value,.after = p.value) %>%
+              ungroup() %>% 
+              arrange(p.value)
+            
+            results <- new('StructuralEnrichment',
+                           x,
+                           explanatory = explanatory_features,
+                           classifications = feature_classifications,
+                           results = ora_results)
+            
+            return(results)
+          }
+)
+
+#' @rdname structuralEnrichment
+
+setMethod('structuralEnrichment',signature = c('Univariate','Construction'),
           function(x,
                    structural_classifications,
                    p_adjust_method = 'bonferroni',

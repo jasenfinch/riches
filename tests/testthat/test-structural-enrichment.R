@@ -98,7 +98,7 @@ test_that("structural enrichment works for linear regression", {
     lr,
     structural_classifications,
     split = 'trends',
-    threshold  = 0.2
+    value = 'p.value'
   )
   
   expect_s4_class(structural_enrichment,'StructuralEnrichment')

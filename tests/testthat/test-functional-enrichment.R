@@ -126,3 +126,92 @@ test_that('functional enrichment errors with trends for unsupervised random fore
     split = 'trends')
   )
 })
+
+test_that('functional enrichment works for t-test',{
+  t_test <- assigned_data %>%
+    metabolyseR::ttest(
+      cls = 'class',
+      comparisons = list(
+        class = 'ABR1~BD21'
+      ))
+  
+  enrichment_results <- functionalEnrichment(
+    t_test,
+    'bdi',
+    methods = 'hypergeom',
+    organism_data = organismData(
+      'bdi',
+      database_directory = system.file(
+        'bdi',
+        package = 'riches'),
+      internal_directory = FALSE
+    ),
+    split = 'trends'
+  )
+  
+  expect_s4_class(enrichment_results,'FunctionalEnrichment')
+  expect_s3_class(hits(enrichment_results),'tbl_df')
+  expect_s3_class(explanatoryFeatures(enrichment_results),'tbl_df')
+  expect_type(enrichmentResults(enrichment_results),'list')
+  expect_s3_class(generateResultsTable(enrichment_results),'tbl_df')
+  expect_output(show(enrichment_results),'t-test')
+})
+
+test_that('functional enrichment works for anova',{
+  anova <- assigned_data %>%
+    metabolyseR::anova(
+      cls = 'class',
+      comparisons = list(
+        class = 'ABR1~BD21'
+      ))
+  
+  enrichment_results <- functionalEnrichment(
+    anova,
+    'bdi',
+    methods = 'hypergeom',
+    organism_data = organismData(
+      'bdi',
+      database_directory = system.file(
+        'bdi',
+        package = 'riches'),
+      internal_directory = FALSE
+    ),
+    split = 'trends'
+  )
+  
+  expect_s4_class(enrichment_results,'FunctionalEnrichment')
+  expect_s3_class(hits(enrichment_results),'tbl_df')
+  expect_s3_class(explanatoryFeatures(enrichment_results),'tbl_df')
+  expect_type(enrichmentResults(enrichment_results),'list')
+  expect_s3_class(generateResultsTable(enrichment_results),'tbl_df')
+  expect_output(show(enrichment_results),'ANOVA')
+})
+
+test_that('functional enrichment works for linear regression',{
+  lr <- assigned_data %>%
+    metabolyseR::linearRegression(
+      cls = 'injOrder'
+    )
+  
+  enrichment_results <- functionalEnrichment(
+    lr,
+    'bdi',
+    methods = 'hypergeom',
+    organism_data = organismData(
+      'bdi',
+      database_directory = system.file(
+        'bdi',
+        package = 'riches'),
+      internal_directory = FALSE
+    ),
+    split = 'trends',
+    value = 'p.value'
+  )
+  
+  expect_s4_class(enrichment_results,'FunctionalEnrichment')
+  expect_s3_class(hits(enrichment_results),'tbl_df')
+  expect_s3_class(explanatoryFeatures(enrichment_results),'tbl_df')
+  expect_type(enrichmentResults(enrichment_results),'list')
+  expect_s3_class(generateResultsTable(enrichment_results),'tbl_df')
+  expect_output(show(enrichment_results),'linear regression')
+})

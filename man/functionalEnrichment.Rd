@@ -3,6 +3,7 @@
 \name{functionalEnrichment}
 \alias{functionalEnrichment}
 \alias{functionalEnrichment,RandomForest-method}
+\alias{functionalEnrichment,Univariate-method}
 \title{Functional enrichment}
 \usage{
 functionalEnrichment(
@@ -16,6 +17,16 @@ functionalEnrichment(
 )
 
 \S4method{functionalEnrichment}{RandomForest}(
+  x,
+  organism,
+  methods = availableMethods(),
+  split = c("none", "trends"),
+  organism_data = organismData(organism),
+  adduct_rules_table = adduct_rules(),
+  ...
+)
+
+\S4method{functionalEnrichment}{Univariate}(
   x,
   organism,
   methods = availableMethods(),

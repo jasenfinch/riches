@@ -11,12 +11,12 @@ availableMethods <- function(){
 
 setClass('FunctionalEnrichment',
          slots = list(
-           organism_data = 'FELLA.DATA',
            hits = 'tbl_df',
            explanatory = 'tbl_df',
-           results = 'list'
+           enrichment_results = 'list'
          ),
          contains = c('RandomForest',
+                      'Univariate',
                       'FELLA.DATA')
 )
 
@@ -24,7 +24,14 @@ setClass('FunctionalEnrichment',
 
 setMethod('show',signature = 'FunctionalEnrichment',
           function(object){
-            show(as(object,'RandomForest'))
+            object_type <- type(object)
+
+            if (object_type %in% c('t-test','ANOVA','linear regression')){
+              show(as(object,'Univariate'))
+            } else {
+              show(as(object,'RandomForest'))
+            }
+
             show(as(object,'FELLA.DATA'))
             message()
             cat(length(unique(hits(object)$feature)),'m/z features matched to KEGG compounds.\n')
@@ -111,7 +118,7 @@ setGeneric('enrichmentResults',function(x)
 
 setMethod('enrichmentResults',signature = 'FunctionalEnrichment',
           function(x){
-            x@results
+            x@enrichment_results
           })
 
 #' @rdname functional-accessors
@@ -365,8 +372,125 @@ setMethod(
       organism_data,
       hits = mf_hits,
       explanatory = explanatory_features,
-      results = enrichment_results
+      enrichment_results = enrichment_results,
+      results = tibble::tibble()
     )            
     
     return(results)
   })
+
+#' @rdname functionalEnrichment
+
+setMethod(
+  'functionalEnrichment',
+  signature = 'Univariate',
+  function(
+    x,
+    organism,
+    methods = availableMethods(),
+    split = c('none','trends'),
+    organism_data = organismData(organism),
+    adduct_rules_table = adduct_rules(),
+    ...
+  ){
+
+    model_type <- type(x)
+
+    methods <- match.arg(methods,
+                        choices = availableMethods(),
+                        several.ok = TRUE)
+    
+    split <- match.arg(split,
+                       choices = c(
+                         'none',
+                         'trends'
+                       ))
+    
+    explanatory_features <- explanatoryFeatures(x,...)
+    
+    if (split == 'trends'){
+      explanatory_features <- trends(x,explanatory_features)
+    }
+    
+    mf_hits <- pips(x,
+                    organism_data,
+                    adduct_rules_table)
+    
+    background_compounds <- mf_hits$ID %>%
+      unique()
+    
+    if (model_type != 'linear regression'){
+      explanatory_features <- explanatory_features %>% 
+        group_by(response,comparison)
+    } else {
+      explanatory_features <- explanatory_features %>% 
+        group_by(response)
+    }
+    
+    if (split == 'trends'){
+      explanatory_features <- explanatory_features %>% 
+        group_by(trend,.add = TRUE)
+    }
+    
+    enrichment_results <- explanatory_features %>%
+      dplyr::group_map(~{
+        message()
+        
+        if (model_type != 'linear regression'){
+          message(.x$comparison[1]) 
+        } else {
+          message(.x$trend[1]) 
+        }
+        
+        explanatory_compounds <- mf_hits %>%
+          filter(name %in% .x$feature) %>%
+          .$ID %>%
+          unique()
+        
+        if (length(explanatory_compounds) > 0) {
+          comparison_enrichment <- defineCompounds(
+            compounds = explanatory_compounds,
+            compoundsBackground = background_compounds,
+            data = organism_data)
+          
+          if ('hypergeom' %in% methods) {
+            comparison_enrichment <- comparison_enrichment %>%
+              runHypergeom(data = organism_data)
+          }
+          
+          if ('diffusion' %in% methods) {
+            comparison_enrichment <- comparison_enrichment %>%
+              runDiffusion(data = organism_data)    
+          }
+          
+          if ('pagerank'%in% methods) {
+            comparison_enrichment <- comparison_enrichment %>%
+              runPagerank(data = organism_data)
+          }
+          
+          return(comparison_enrichment)
+        } else {
+          message('No assigned explanatory m/z features matched to KEGG compounds.')
+        }
+      },.keep = TRUE)
+    
+    
+    group_names <- group_keys(explanatory_features) %>% 
+      tidyr::unite(name) %>% 
+      .$name
+    
+    enrichment_results <- enrichment_results %>% 
+      set_names(group_names)
+    
+    
+    results <- new(
+      'FunctionalEnrichment',
+      x,
+      organism_data,
+      hits = mf_hits,
+      explanatory = explanatory_features,
+      enrichment_results = enrichment_results
+    )            
+    
+    return(results)
+})

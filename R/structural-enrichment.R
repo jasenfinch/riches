@@ -405,6 +405,7 @@ setMethod('structuralEnrichment',signature = c('RandomForest','Construction'),
           })
 
 #' @rdname structuralEnrichment
+#' @importFrom dplyr contains
 
 setMethod('structuralEnrichment',signature = 'Univariate',
           function(x,
